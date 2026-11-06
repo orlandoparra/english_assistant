@@ -90,7 +90,7 @@
   <header>
     <h1>English Assistant</h1>
     <p>Documento de arquitectura de la plataforma</p>
-    <div class="meta">Última actualización: 5 de noviembre de 2026</div>
+    <div class="meta">Última actualización: 6 de noviembre de 2026</div>
   </header>
 
   <main>
@@ -119,15 +119,28 @@
 ├── public/images/        → Imágenes (hero-student.png)
 └── src/
     ├── app/              → PÁGINAS y rutas
-    │   ├── layout.tsx    → Plantilla fija: Navbar + {centro} + Footer
+    │   ├── layout.tsx    → Plantilla fija: Navbar + {centro} + Footer (con AuthProvider)
     │   ├── page.tsx      → Página principal "/" (muestra el Hero)
+    │   ├── login/        → "/login": inicio de sesión
+    │   ├── register/     → "/register": creación de cuenta
+    │   ├── dashboard/    → "/dashboard": zona autenticada
     │   └── globals.css   → Paleta de colores y estilos base
-    └── components/       → Piezas reutilizables
-        ├── Navbar.tsx    → Barra superior
-        ├── Hero.tsx      → Sección principal con degradado
-        ├── Footer.tsx    → Pie de página (4 columnas / acordeones)
-        ├── Logo.tsx      → Logo "English Assistant" (SVG vectorial)
-        └── HelpButton.tsx→ Botón flotante de ayuda</pre>
+    ├── components/       → Piezas reutilizables
+    │   ├── Navbar.tsx    → Barra superior
+    │   ├── Hero.tsx      → Sección principal con degradado
+    │   ├── Footer.tsx    → Pie de página (4 columnas / acordeones)
+    │   ├── Logo.tsx      → Logo "English Assistant" (SVG vectorial)
+    │   ├── HelpButton.tsx→ Botón flotante de ayuda
+    │   ├── auth/         → Login y registro: AuthShell (tarjeta + panel de marca),
+    │   │                   FloatingField / FloatingSelect (etiqueta flotante),
+    │   │                   ErrorBalloon (globo de error), CompletionMeter, etc.
+    │   └── dashboard/    → DashboardBar, SummaryCard
+    ├── context/
+    │   └── AuthContext.tsx → Estado de sesión (usuario, token, login/registro/logout)
+    └── lib/
+        ├── api.ts        → Llamadas HTTP al backend (register, login, getMe)
+        ├── tokenStorage.ts → Guarda el token en localStorage o sessionStorage
+        └── validation.ts → Validaciones de formularios en el cliente</pre>
       <h3>Idea clave: layout fijo</h3>
       <p>
         <code>layout.tsx</code> es el marco fijo (navbar arriba, footer abajo).
@@ -214,8 +227,8 @@
         <tr><td>Página principal (Navbar, Hero, Footer)</td><td class="listo">Listo</td></tr>
         <tr><td>Logo reutilizable</td><td class="listo">Listo</td></tr>
         <tr><td>Backend: registro, login, perfil</td><td class="listo">Listo</td></tr>
-        <tr><td>Formularios de login / registro (frontend)</td><td class="pendiente">Pendiente</td></tr>
-        <tr><td>Conexión frontend ↔ backend (authService)</td><td class="pendiente">Pendiente</td></tr>
+        <tr><td>Formularios de login / registro (frontend)</td><td class="listo">Listo</td></tr>
+        <tr><td>Conexión frontend ↔ backend (api.ts + AuthContext)</td><td class="listo">Listo</td></tr>
         <tr><td>Recuperar contraseña</td><td class="pendiente">Pendiente</td></tr>
         <tr><td>Migración a PostgreSQL (nube o Docker)</td><td class="pendiente">Pendiente</td></tr>
         <tr><td>Migraciones con Alembic</td><td class="pendiente">Pendiente</td></tr>

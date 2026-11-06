@@ -4,6 +4,10 @@ import Logo from "@/components/Logo";
 type AuthShellProps = {
   /** Contenido de la tarjeta de formulario (panel derecho). */
   children: ReactNode;
+  /** Titular del panel de marca. */
+  title?: ReactNode;
+  /** Texto descriptivo bajo el titular. */
+  subtitle?: string;
 };
 
 /**
@@ -19,7 +23,15 @@ type AuthShellProps = {
  * Los colores replican los del Hero (`src/components/Hero.tsx`) para mantener la
  * coherencia visual con la página principal.
  */
-export default function AuthShell({ children }: AuthShellProps) {
+export default function AuthShell({
+  children,
+  title = (
+    <>
+      Continúa tu camino hacia la <span className="text-white">fluidez</span>.
+    </>
+  ),
+  subtitle = "Tu complemento para aprender inglés, desde A1 hasta C2. Avanza a tu ritmo, paso a paso.",
+}: AuthShellProps) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-sky-soft px-4 py-10">
       <div className="grid w-full max-w-4xl overflow-hidden rounded-3xl shadow-2xl shadow-brand-900/20 md:grid-cols-2">
@@ -37,12 +49,9 @@ export default function AuthShell({ children }: AuthShellProps) {
 
           <div className="relative">
             <h1 className="text-3xl font-bold leading-[1.15] text-white">
-              Continúa tu camino hacia la <span className="text-white">fluidez</span>.
+              {title}
             </h1>
-            <p className="mt-4 text-sm leading-6 text-white/80">
-              Tu complemento para aprender inglés, desde A1 hasta C2. Avanza a
-              tu ritmo, paso a paso.
-            </p>
+            <p className="mt-4 text-sm leading-6 text-white/80">{subtitle}</p>
           </div>
 
         </section>

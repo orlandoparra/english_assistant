@@ -1,7 +1,47 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import ErrorBalloon from "@/components/auth/ErrorBalloon";
+
+/**
+ * Ojo relleno para mostrar/ocultar la contraseña: contorno sólido con un anillo
+ * blanco y la pupila. Con `crossed` se le superpone una línea diagonal.
+ */
+function PasswordEyeIcon({ crossed }: { crossed: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 5C6.5 5 2.5 9 1 12c1.5 3 5.5 7 11 7s9.5-4 11-7c-1.5-3-5.5-7-11-7z"
+        fill="currentColor"
+      />
+      <circle cx="12" cy="12" r="4.6" stroke="#ffffff" strokeWidth="1.5" />
+      <circle cx="12.6" cy="12.4" r="2.4" fill="currentColor" />
+      {/* Brillo: punto blanco cerca del borde superior del iris */}
+      <circle cx="11.2" cy="9.6" r="1.4" fill="#ffffff" />
+      {crossed && (
+        <>
+          <path
+            d="M4 4l16 16"
+            stroke="#ffffff"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M4 4l16 16"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </>
+      )}
+    </svg>
+  );
+}
 
 type FloatingFieldProps = {
   /** Etiqueta flotante que hace las veces de placeholder. */
@@ -143,38 +183,15 @@ export default function FloatingField({
             type="button"
             onClick={() => setShow((v) => !v)}
             aria-label={show ? "Ocultar contraseña" : "Mostrar contraseña"}
-            className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 transition-colors hover:text-slate-600"
+            className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500 transition-colors hover:text-slate-700"
           >
-            {show ? (
-              <EyeOff className="h-5 w-5" aria-hidden="true" />
-            ) : (
-              <Eye className="h-5 w-5" aria-hidden="true" />
-            )}
+            <PasswordEyeIcon crossed={show} />
           </button>
         )}
       </div>
 
-      {/* Globo de error flotante: no desplaza el layout, aparece con una
-          animación suave bajo el campo y lo anuncia a lectores de pantalla. */}
-      {error && (
-        <div
-          role="alert"
-          className="animate-error-pop absolute left-6 top-full z-20 mt-2 flex w-fit max-w-[18rem] items-center gap-2 rounded-lg border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 shadow-lg shadow-slate-900/10"
-        >
-          {/* Flechita del globo apuntando al campo */}
-          <span
-            aria-hidden="true"
-            className="absolute -top-1.5 left-5 h-3 w-3 rotate-45 border-l border-t border-slate-200 bg-white"
-          />
-          <span
-            aria-hidden="true"
-            className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md bg-orange-500 text-xs font-bold text-white"
-          >
-            !
-          </span>
-          <span className="text-xs font-medium text-slate-800">{error}</span>
-        </div>
-      )}
+      {/* Globo de error flotante: no desplaza el layout. */}
+      {error && <ErrorBalloon message={error} />}
     </div>
   );
 }

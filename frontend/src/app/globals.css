@@ -52,6 +52,13 @@ input:-webkit-autofill {
   animation-duration: 0.001s;
 }
 
+/* Oculta el botón nativo de Edge/IE para mostrar la contraseña (el "segundo
+   ojo"), ya que los campos de contraseña tienen su propio botón. */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
 /* Entrada suave del globo de error de los campos de formulario. */
 @keyframes error-pop {
   from {

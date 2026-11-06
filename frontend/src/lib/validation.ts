@@ -21,7 +21,10 @@ export const PASSWORD_MAX_LENGTH = 128;
 export const VALIDATION_MESSAGES = {
   emailInvalid: "Ingresa un correo válido.",
   passwordLength: `Usa entre ${PASSWORD_MIN_LENGTH} y ${PASSWORD_MAX_LENGTH} caracteres.`,
+  passwordNumber: "Incluye al menos 1 número.",
+  passwordUppercase: "Incluye al menos 1 mayúscula.",
   required: "Por favor, diligencia este campo.",
+  selectRequired: "Por favor, selecciona un elemento de la lista.",
 } as const;
 
 /**
@@ -144,7 +147,40 @@ export function validatePassword(value: string): string | null {
   if (value.length === 0) {
     return VALIDATION_MESSAGES.required;
   }
-  return isValidPasswordLength(value) ? null : VALIDATION_MESSAGES.passwordLength;
+  if (!isValidPasswordLength(value)) {
+    return VALIDATION_MESSAGES.passwordLength;
+  }
+  // Longitud correcta: se indica el primer requisito pendiente.
+  if (!/\d/.test(value)) {
+    return VALIDATION_MESSAGES.passwordNumber;
+  }
+  if (!/\p{Lu}/u.test(value)) {
+    return VALIDATION_MESSAGES.passwordUppercase;
+  }
+  return null;
+}
+
+/** Estado de cada requisito de la contraseña de registro (checklist en vivo). */
+export interface PasswordRequirements {
+  /** Entre 8 y 128 caracteres. */
+  length: boolean;
+  /** Al menos un número. */
+  number: boolean;
+  /** Al menos una letra mayúscula. */
+  uppercase: boolean;
+}
+
+/**
+ * Evalúa qué requisitos cumple una contraseña. Alimenta el checklist que se
+ * muestra bajo el campo en el registro y comparte las reglas con
+ * `validatePassword`.
+ */
+export function passwordRequirements(value: string): PasswordRequirements {
+  return {
+    length: isValidPasswordLength(value),
+    number: /\d/.test(value),
+    uppercase: /\p{Lu}/u.test(value),
+  };
 }
 
 /**
@@ -225,8 +261,10 @@ export function validateRegisterField(
       return validatePassword(value);
     case "first_name":
     case "last_name":
-    case "english_level":
       return validateRequired(value);
+    case "english_level":
+      // Es un selector: sin opción elegida se pide seleccionar de la lista.
+      return isBlank(value) ? VALIDATION_MESSAGES.selectRequired : null;
     default: {
       // Exhaustividad: si se añade un campo nuevo, TypeScript avisará aquí.
       const _exhaustive: never = field;

@@ -3,10 +3,11 @@
 /**
  * Pagina_Login: página de inicio de sesión (`/login`).
  *
- * Client component que muestra el layout de dos columnas (AuthLayout + BrandPanel)
- * con una tarjeta de formulario a la derecha: campos Correo y Contraseña, checkbox
- * "Recordarme", enlace "¿Olvidaste tu contraseña?", botón "INICIAR SESIÓN", enlace
- * "Volver al inicio" (`/`) y enlace a `/register`.
+ * Client component que muestra la tarjeta compacta de autenticación (`AuthShell`)
+ * con el panel de marca a la izquierda y el formulario a la derecha: campos
+ * Correo y Contraseña (`FloatingField`), checkbox "Recordarme", enlace
+ * "¿Olvidaste tu contraseña?", botón "Iniciar Sesión", enlace "Volver al inicio"
+ * (`/`) y enlace a `/register`.
  *
  * Responsabilidades:
  *  - Validación en cliente del correo (formato/obligatoriedad) y la contraseña
