@@ -34,8 +34,17 @@ import { LEVEL_OPTIONS } from "@/components/auth/LevelSelect";
 import { useAuth } from "@/context/AuthContext";
 import { ApiError, type EnglishLevel } from "@/lib/api";
 import {
+  cleanEmail,
+  cleanPastedPassword,
+  cleanRegisterInput,
+  toTitleCase,
+} from "@/lib/inputCleaning";
+import {
   REGISTER_REQUIRED_FIELDS,
   canSubmit,
+  isBlank,
+  suggestEmailDomain,
+  validateRegisterEmail,
   validateRegisterForm,
   type FieldErrors,
   type RegisterFieldName,
@@ -74,6 +83,8 @@ export default function RegisterPage() {
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Correo corregido que se ofrece al usuario cuando el dominio parece mal escrito.
+  const [emailSuggestion, setEmailSuggestion] = useState<string | null>(null);
 
   /**
    * Actualiza el valor de un campo y quita su mensaje de error mientras el
@@ -81,7 +92,11 @@ export default function RegisterPage() {
    * automáticamente, pues `CompletionMeter` deriva su valor de `values`
    * (Requirement 3.7).
    */
-  const handleChange = (field: RegisterFieldName, value: string) => {
+  const handleChange = (field: RegisterFieldName, rawValue: string) => {
+    // Primero se limpia lo escrito o pegado (correo en minúsculas y sin espacios,
+    // nombres sin saltos de línea) y después se guarda.
+    const value = cleanRegisterInput(field, rawValue);
+    if (field === "email") setEmailSuggestion(null);
     setValues((prev) => ({ ...prev, [field]: value }));
     setBalloonField((current) => (current === field ? null : current));
     setErrors((prev) => {
@@ -90,6 +105,29 @@ export default function RegisterPage() {
       delete next[field];
       return next;
     });
+  };
+
+  /**
+   * Al salir de un campo: nombre y apellido se capitalizan ("nelson parra" ->
+   * "Nelson Parra") y, si el correo es válido, se sugiere corregir un dominio mal
+   * escrito (gmial.com -> gmail.com). La sugerencia es solo una ayuda: no bloquea.
+   */
+  const handleBlur = (field: RegisterFieldName) => {
+    const value = values[field];
+    if (field === "first_name" || field === "last_name") {
+      if (!isBlank(value)) {
+        setValues((prev) => ({ ...prev, [field]: toTitleCase(value) }));
+      }
+    }
+    if (field === "email") {
+      setEmailSuggestion(
+        validateRegisterEmail(value) === null ? suggestEmailDomain(value) : null,
+      );
+    }
+  };
+
+  const applyEmailSuggestion = () => {
+    if (emailSuggestion) handleChange("email", emailSuggestion);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -174,6 +212,7 @@ export default function RegisterPage() {
               value={values.first_name}
               error={balloonFor("first_name")}
               onChange={(value) => handleChange("first_name", value)}
+              onBlur={() => handleBlur("first_name")}
             />
             <FloatingField
               label="Apellido"
@@ -181,6 +220,7 @@ export default function RegisterPage() {
               value={values.last_name}
               error={balloonFor("last_name")}
               onChange={(value) => handleChange("last_name", value)}
+              onBlur={() => handleBlur("last_name")}
             />
           </div>
 
@@ -190,8 +230,23 @@ export default function RegisterPage() {
             autoComplete="email"
             value={values.email}
             error={balloonFor("email")}
+            sanitizePaste={cleanEmail}
             onChange={(value) => handleChange("email", value)}
+            onBlur={() => handleBlur("email")}
           />
+          {emailSuggestion && (
+            <p className="-mt-2 pl-4 text-xs text-slate-600">
+              ¿Quisiste decir{" "}
+              <button
+                type="button"
+                onClick={applyEmailSuggestion}
+                className="font-semibold text-brand-700 underline underline-offset-2 hover:text-brand-900"
+              >
+                {emailSuggestion}
+              </button>
+              ?
+            </p>
+          )}
 
           <FloatingField
             label="Contraseña"
@@ -199,6 +254,7 @@ export default function RegisterPage() {
             autoComplete="new-password"
             value={values.password}
             error={balloonFor("password")}
+            sanitizePaste={cleanPastedPassword}
             onChange={(value) => handleChange("password", value)}
           />
           <PasswordChecklist password={values.password} />

@@ -30,6 +30,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import FloatingField from "@/components/auth/FloatingField";
 import { useAuth } from "@/context/AuthContext";
 import { ApiError } from "@/lib/api";
+import { cleanEmail, cleanPastedPassword } from "@/lib/inputCleaning";
 import {
   validateLoginForm,
   type FieldErrors,
@@ -62,7 +63,11 @@ export default function LoginPage() {
   const [forgotNotice, setForgotNotice] = useState<string | null>(null);
 
   /** Actualiza el valor de un campo y quita su mensaje de error mientras escribe. */
-  const handleChange = (field: LoginFieldName, value: string) => {
+  const handleChange = (field: LoginFieldName, rawValue: string) => {
+    // El correo se limpia igual que en el registro (minúsculas, sin espacios), para
+    // que quien se registró con un correo pueda entrar escribiéndolo con otro
+    // formato de mayúsculas.
+    const value = field === "email" ? cleanEmail(rawValue) : rawValue;
     setValues((prev) => ({ ...prev, [field]: value }));
     // Al escribir, el mensaje de ese campo desaparece para dejar al usuario
     // escribir tranquilo. No se valida mientras se escribe: el formato se
@@ -156,6 +161,7 @@ export default function LoginPage() {
             autoComplete="email"
             value={values.email}
             error={balloonField === "email" ? errors.email : undefined}
+            sanitizePaste={cleanEmail}
             onChange={(value) => handleChange("email", value)}
           />
 
@@ -165,6 +171,7 @@ export default function LoginPage() {
             autoComplete="current-password"
             value={values.password}
             error={balloonField === "password" ? errors.password : undefined}
+            sanitizePaste={cleanPastedPassword}
             onChange={(value) => handleChange("password", value)}
           />
 

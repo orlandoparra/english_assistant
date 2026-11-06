@@ -4,7 +4,7 @@ FastAPI los usa para validar automáticamente y para la documentación Swagger.
 """
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from app.models.user import EnglishLevel
 
@@ -17,11 +17,23 @@ class UserCreate(BaseModel):
     password: str = Field(min_length=8, max_length=128)
     english_level: EnglishLevel
 
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        """Guarda el correo siempre en minúsculas (así no hay duplicados por mayúsculas)."""
+        return value.lower()
+
 
 class UserLogin(BaseModel):
     """Datos que llegan al iniciar sesión."""
     email: EmailStr
     password: str
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        """Busca el correo en minúsculas, igual que se guarda al registrarse."""
+        return value.lower()
 
 
 class UserOut(BaseModel):

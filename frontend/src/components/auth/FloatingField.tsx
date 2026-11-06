@@ -54,6 +54,8 @@ type FloatingFieldProps = {
   autoComplete?: string;
   /** Mensaje de error mostrado en el globo flotante bajo el campo. */
   error?: string;
+  /** Limpia el texto pegado antes de insertarlo (p. ej. quitar saltos de línea). */
+  sanitizePaste?: (text: string) => string;
   onChange: (value: string) => void;
   onBlur?: () => void;
 };
@@ -80,6 +82,7 @@ export default function FloatingField({
   type = "text",
   autoComplete,
   error,
+  sanitizePaste,
   onChange,
   onBlur,
 }: FloatingFieldProps) {
@@ -91,7 +94,11 @@ export default function FloatingField({
   // (truco estándar: una keyframe se asocia al pseudo-selector `:autofill`).
   const [autofilled, setAutofilled] = useState(false);
   const isPassword = type === "password";
-  const inputType = isPassword && show ? "text" : type;
+  // `type="email"` hace que el navegador recorte en silencio los espacios del
+  // inicio y del final al leer el valor, así que React no los ve y no puede
+  // quitarlos. Se usa un campo de texto con `inputMode="email"`, que conserva el
+  // teclado de correo en el móvil y deja que nuestro filtro reciba el texto real.
+  const inputType = type === "email" ? "text" : isPassword && show ? "text" : type;
   const hasError = Boolean(error);
 
   // El navegador puede autocompletar el campo sin disparar `onChange`. El
@@ -125,6 +132,9 @@ export default function FloatingField({
           ref={inputRef}
           id={id}
           type={inputType}
+          inputMode={type === "email" ? "email" : undefined}
+          autoCapitalize={type === "email" ? "none" : undefined}
+          spellCheck={type === "email" ? false : undefined}
           value={value}
           autoComplete={autoComplete}
           placeholder=" "
@@ -133,6 +143,17 @@ export default function FloatingField({
             onChange(event.target.value);
           }}
           onBlur={onBlur}
+          onPaste={(event) => {
+            if (!sanitizePaste) return;
+            // Se inserta el texto ya limpio en la posición del cursor.
+            event.preventDefault();
+            const el = event.currentTarget;
+            const text = sanitizePaste(event.clipboardData.getData("text"));
+            const start = el.selectionStart ?? el.value.length;
+            const end = el.selectionEnd ?? start;
+            setAutofilled(false);
+            onChange(el.value.slice(0, start) + text + el.value.slice(end));
+          }}
           // Detecta el autofill del navegador mediante la animación CSS
           // `autofill-hook` asociada al pseudo-selector `:autofill`.
           onAnimationStart={(event) => {

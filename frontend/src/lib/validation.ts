@@ -195,6 +195,174 @@ export function validateRequired(value: string): string | null {
   return isBlank(value) ? VALIDATION_MESSAGES.required : null;
 }
 
+// --- Nombre y apellido ------------------------------------------------------
+
+/** Letras permitidas: A-Z, tildes, ñ y diéresis (sin los símbolos × ni ÷). */
+const NAME_LETTER = "A-Za-zÀ-ÖØ-öø-ÿ";
+const NAME_ALLOWED = new RegExp(`^[${NAME_LETTER}\\s'-]+$`);
+const NOT_A_LETTER = new RegExp(`[^${NAME_LETTER}]`, "g");
+/** Primer carácter que no es letra, espacio, guion, apóstrofe ni dígito. */
+const NAME_SPECIAL = new RegExp(`[^${NAME_LETTER}\\s'\\d-]`);
+
+/**
+ * Valida un nombre o apellido.
+ *
+ * Reglas: obligatorio; solo letras (con tildes y ñ), espacio, guion y apóstrofe;
+ * sin números ni símbolos; sin guion o apóstrofe doble; no empieza ni termina con
+ * guion o apóstrofe; mínimo 2 letras. Devuelve el primer problema encontrado.
+ */
+export function validateName(value: string): string | null {
+  if (isBlank(value)) {
+    return VALIDATION_MESSAGES.required;
+  }
+
+  const hasNumbers = /\d/.test(value);
+  const withoutDigits = value.replace(/\d/g, "");
+  const hasSpecial = withoutDigits.length > 0 && !NAME_ALLOWED.test(withoutDigits);
+
+  if (hasNumbers && hasSpecial) {
+    // El mensaje nombra primero lo que el usuario escribió primero: "!2" avisa de
+    // los caracteres especiales y "2!" de los números.
+    return value.search(/\d/) < value.search(NAME_SPECIAL)
+      ? "No se permiten números ni caracteres especiales."
+      : "No se permiten caracteres especiales ni números.";
+  }
+  if (hasNumbers) {
+    return "No se permiten números.";
+  }
+  if (hasSpecial) {
+    return "No se permiten caracteres especiales.";
+  }
+  if (/--|''/.test(value)) {
+    return "No se permite repetir el guion ni el apóstrofe.";
+  }
+  if (/^['-]|['-]$/.test(value.trim())) {
+    return "No puede empezar ni terminar con guion o apóstrofe.";
+  }
+  if (value.replace(NOT_A_LETTER, "").length < 2) {
+    return "Escribe al menos 2 letras.";
+  }
+  return null;
+}
+
+// --- Correo del registro ----------------------------------------------------
+
+/** Dominios temporales o desechables que no se aceptan al crear una cuenta. */
+export const DISPOSABLE_DOMAINS: readonly string[] = [
+  "mailinator.com",
+  "yopmail.com",
+  "10minutemail.com",
+  "guerrillamail.com",
+  "tempmail.com",
+  "throwam.com",
+  "sharklasers.com",
+  "trashmail.com",
+];
+
+/** Dominios habituales: base para sugerir correcciones de errores de escritura. */
+export const COMMON_EMAIL_DOMAINS: readonly string[] = [
+  "gmail.com",
+  "hotmail.com",
+  "outlook.com",
+  "yahoo.com",
+  "icloud.com",
+  "live.com",
+  "protonmail.com",
+  "zoho.com",
+  "aol.com",
+  "msn.com",
+];
+
+/** Indica si el dominio (o uno de sus subdominios) es de correo desechable. */
+export function isDisposableDomain(domain: string): boolean {
+  const lower = domain.toLowerCase();
+  return DISPOSABLE_DOMAINS.some(
+    (blocked) => lower === blocked || lower.endsWith(`.${blocked}`),
+  );
+}
+
+/**
+ * Distancia de edición entre dos cadenas (Damerau-Levenshtein restringida):
+ * insertar, borrar o cambiar una letra cuesta 1, y intercambiar dos letras
+ * contiguas también cuesta 1 ("gmial" -> "gmail").
+ */
+function editDistance(a: string, b: string): number {
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const d: number[][] = Array.from({ length: rows }, (_, i) => {
+    const row = new Array<number>(cols).fill(0);
+    row[0] = i;
+    return row;
+  });
+  for (let j = 1; j < cols; j++) d[0][j] = j;
+
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+      }
+    }
+  }
+  return d[a.length][b.length];
+}
+
+/**
+ * Sugiere el correo corregido si el dominio parece un error de escritura de uno
+ * habitual ("ana@gmial.com" -> "ana@gmail.com"). Devuelve `null` si no hay nada
+ * que sugerir. Es solo una sugerencia: no impide enviar el formulario.
+ */
+export function suggestEmailDomain(email: string): string | null {
+  const atIndex = email.indexOf("@");
+  if (atIndex < 1) return null;
+
+  const user = email.slice(0, atIndex);
+  const domain = email.slice(atIndex + 1).toLowerCase();
+  if (!domain || COMMON_EMAIL_DOMAINS.includes(domain)) return null;
+
+  const match = COMMON_EMAIL_DOMAINS.find((known) => editDistance(domain, known) <= 1);
+  return match ? `${user}@${match}` : null;
+}
+
+/**
+ * Valida el correo al crear una cuenta. Primero aplica la validación de formato
+ * (con sus mensajes específicos) y después las reglas más estrictas del registro:
+ * solo ASCII, caracteres permitidos, dominio sin guion al inicio o al final de
+ * cada parte y sin dominios desechables.
+ *
+ * El login NO usa estas reglas más estrictas: no debe impedir entrar a quien ya
+ * tiene una cuenta. Allí basta `validateEmail`.
+ */
+export function validateRegisterEmail(value: string): string | null {
+  const formatError = validateEmail(value);
+  if (formatError !== null) {
+    return formatError;
+  }
+
+  if (/[^\u0020-\u007E]/.test(value)) {
+    return "El correo no puede tener emojis ni símbolos especiales.";
+  }
+
+  const atIndex = value.indexOf("@");
+  const local = value.slice(0, atIndex);
+  const domain = value.slice(atIndex + 1);
+
+  if (!/^[a-zA-Z0-9._+-]+$/.test(local)) {
+    return "Antes del '@' solo se permiten letras, números, . _ - y +";
+  }
+  if (!/^[a-zA-Z0-9.-]+$/.test(domain)) {
+    return "El dominio tiene caracteres no permitidos.";
+  }
+  if (domain.split(".").some((part) => part.startsWith("-") || part.endsWith("-"))) {
+    return "El dominio no puede empezar ni terminar con guion.";
+  }
+  if (isDisposableDomain(domain)) {
+    return "No se permiten correos temporales o desechables.";
+  }
+  return null;
+}
+
 /** Nombre de cada campo requerido del formulario de registro. */
 export type RegisterFieldName =
   | "first_name"
@@ -256,12 +424,12 @@ export function validateRegisterField(
 ): string | null {
   switch (field) {
     case "email":
-      return validateEmail(value);
+      return validateRegisterEmail(value);
     case "password":
       return validatePassword(value);
     case "first_name":
     case "last_name":
-      return validateRequired(value);
+      return validateName(value);
     case "english_level":
       // Es un selector: sin opción elegida se pide seleccionar de la lista.
       return isBlank(value) ? VALIDATION_MESSAGES.selectRequired : null;
@@ -385,11 +553,12 @@ function applyFieldValidation<K extends string>(
 }
 
 /**
- * Calcula el porcentaje de campos requeridos del registro con un valor no vacío.
+ * Calcula el porcentaje de campos requeridos del registro que ya son válidos.
  *
- * El resultado es `(campos no vacíos / total de campos requeridos) * 100`, un
- * número entre 0 y 100. Un campo se considera completado si no está vacío ni es
- * solo espacios en blanco.
+ * El resultado es `(campos válidos / total de campos requeridos) * 100`, un
+ * número entre 0 y 100. Un campo cuenta cuando su valor pasa la validación, no
+ * solo cuando tiene algo escrito: así el 100% significa que el formulario está
+ * listo para enviarse.
  *
  * Validates: Requirements 3.7
  */
@@ -398,8 +567,8 @@ export function completionPercentage(values: RegisterFormValues): number {
   if (total === 0) {
     return 100;
   }
-  const filled = REGISTER_REQUIRED_FIELDS.filter(
-    (field) => !isBlank(values[field]),
+  const valid = REGISTER_REQUIRED_FIELDS.filter(
+    (field) => validateRegisterField(field, values[field]) === null,
   ).length;
-  return (filled / total) * 100;
+  return (valid / total) * 100;
 }
