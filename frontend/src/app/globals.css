@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* Paleta personalizada: azul profundo -> aguamarina -> naranja.
+   Se usan como clases de Tailwind: bg-brand-900, text-brand-500, bg-sky-soft, etc. */
+@theme inline {
+  --color-brand-900: #0a2540; /* azul noche */
+  --color-brand-700: #1565a6; /* azul profundo con cuerpo */
+  --color-brand-500: #2b86c5; /* azul medio */
+  --color-accent-500: #dc2626; /* rojo intenso (acentos y botones) */
+  --color-accent-600: #b91c1c; /* rojo oscuro (hover) */
+  --color-sky-soft: #f0f7ff; /* azul muy claro para el fondo superior */
+  --font-sans: var(--font-montserrat);
+}
+
+body {
+  background: #ffffff;
+  color: #0f172a;
+  font-family: var(--font-montserrat), system-ui, sans-serif;
+  /* Encoge visualmente todo el contenido al 95%: cuando el navegador está al
+     100%, la página se ve como si estuviera al 95% (un "alejar" permanente).
+     Soportado en Chrome/Edge. */
+  zoom: 0.95;
+}
+
+/* Campos autocompletados por el navegador (autofill):
+   El navegador impone su propio fondo con un color interno que no puede
+   sobreescribirse con `background-color`. La técnica estándar es taparlo con un
+   `box-shadow` interior del color deseado. Usamos el mismo azul suave que los
+   campos con contenido escrito, para que el aspecto sea consistente.
+   El color equivale a `brand-500` (#2b86c5) al ~5% sobre blanco. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a;
+  box-shadow: 0 0 0 1000px #f4f8fc inset;
+  /* Evita el parpadeo del color amarillo/azul por defecto del navegador. */
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Animación vacía disparada cuando el navegador autocompleta un input.
+   React la capta con `onAnimationStart` para sincronizar su estado (el autofill
+   no dispara `onChange` de forma fiable). */
+@keyframes onAutoFillStart {
+  from {
+  }
+  to {
+  }
+}
+
+input:-webkit-autofill {
+  animation-name: onAutoFillStart;
+  animation-duration: 0.001s;
+}
+
+/* Entrada suave del globo de error de los campos de formulario. */
+@keyframes error-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-error-pop {
+  animation: error-pop 0.18s ease-out;
+}

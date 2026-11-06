@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Actualizar docs/arquitectura.html",
+  "description": "Cuando se crean o editan archivos clave del frontend o backend, recuerda revisar y actualizar docs/arquitectura.html con los cambios de estructura, endpoints o estado del proyecto.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/app/**/*.py",
+      "frontend/src/app/**/*.tsx",
+      "frontend/src/components/**/*.tsx",
+      "frontend/src/lib/**/*.ts",
+      "frontend/src/hooks/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Se modificó un archivo clave de la arquitectura. Revisa si el cambio afecta la estructura de carpetas, los endpoints, las tecnologías o el estado del proyecto. Si es así, actualiza el archivo docs/arquitectura.html (incluida la fecha de \"Última actualización\" y la tabla de estado). Si el cambio no afecta la arquitectura, no hagas nada."
+  }
+}

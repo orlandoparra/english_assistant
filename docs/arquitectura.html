@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arquitectura · English Assistant</title>
+  <style>
+    :root {
+      --azul: #0b2d6b;
+      --azul-medio: #1d6fd6;
+      --rojo: #ef2b2b;
+      --slate: #0f172a;
+      --gris: #64748b;
+      --borde: #e2e8f0;
+      --fondo: #f8fafc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--slate);
+      background: var(--fondo);
+      line-height: 1.6;
+      padding: 0 0 60px;
+    }
+    header {
+      background: linear-gradient(120deg, var(--azul) 0%, var(--azul-medio) 48%, var(--rojo) 100%);
+      color: #fff;
+      padding: 48px 32px;
+      text-align: center;
+    }
+    header h1 { font-size: 32px; margin-bottom: 8px; }
+    header p { opacity: 0.9; font-size: 16px; }
+    .meta {
+      margin-top: 16px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+    main { max-width: 1000px; margin: 0 auto; padding: 32px; }
+    section {
+      background: #fff;
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 22px;
+      color: var(--azul);
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--borde);
+      padding-bottom: 8px;
+    }
+    h3 { font-size: 17px; margin: 18px 0 8px; color: var(--azul-medio); }
+    p { margin-bottom: 12px; }
+    pre {
+      background: var(--slate);
+      color: #e2e8f0;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--borde); font-size: 14px; }
+    th { background: var(--fondo); color: var(--azul); }
+    .flujo {
+      background: var(--fondo);
+      border-left: 4px solid var(--azul-medio);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--azul-medio);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      margin-left: 8px;
+    }
+    .pendiente { color: var(--rojo); font-weight: 600; }
+    .listo { color: #059669; font-weight: 600; }
+    footer { text-align: center; color: var(--gris); font-size: 13px; margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>English Assistant</h1>
+    <p>Documento de arquitectura de la plataforma</p>
+    <div class="meta">Última actualización: 5 de noviembre de 2026</div>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. Visión general</h2>
+      <p>
+        La plataforma usa una arquitectura de <strong>dos capas separadas</strong>:
+        un <strong>frontend</strong> (lo que ve el usuario) y un <strong>backend</strong>
+        (la lógica y los datos). Se comunican por HTTP.
+      </p>
+      <pre>english_assistant/
+├── frontend/   → Interfaz: Next.js + React + TypeScript + Tailwind  (puerto 3000)
+├── backend/    → API y datos: FastAPI + SQLAlchemy + SQLite          (puerto 8000)
+└── docs/       → Documentación del proyecto (este y futuros HTML)</pre>
+      <table>
+        <tr><th>Capa</th><th>Tecnología</th><th>Responsabilidad</th></tr>
+        <tr><td>Frontend</td><td>Next.js 16, React 19, TypeScript, Tailwind 4</td><td>Páginas, diseño, interacción</td></tr>
+        <tr><td>Backend</td><td>FastAPI, SQLAlchemy 2, SQLite</td><td>Usuarios, autenticación, datos</td></tr>
+        <tr><td>Seguridad</td><td>JWT + Argon2</td><td>Tokens de sesión y cifrado de contraseñas</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>2. Frontend</h2>
+      <pre>frontend/
+├── public/images/        → Imágenes (hero-student.png)
+└── src/
+    ├── app/              → PÁGINAS y rutas
+    │   ├── layout.tsx    → Plantilla fija: Navbar + {centro} + Footer
+    │   ├── page.tsx      → Página principal "/" (muestra el Hero)
+    │   └── globals.css   → Paleta de colores y estilos base
+    └── components/       → Piezas reutilizables
+        ├── Navbar.tsx    → Barra superior
+        ├── Hero.tsx      → Sección principal con degradado
+        ├── Footer.tsx    → Pie de página (4 columnas / acordeones)
+        ├── Logo.tsx      → Logo "English Assistant" (SVG vectorial)
+        └── HelpButton.tsx→ Botón flotante de ayuda</pre>
+      <h3>Idea clave: layout fijo</h3>
+      <p>
+        <code>layout.tsx</code> es el marco fijo (navbar arriba, footer abajo).
+        Cada <code>page.tsx</code> solo define qué va en el centro. Al navegar entre
+        páginas, solo cambia el centro, no se recarga todo.
+      </p>
+    </section>
+
+    <section>
+      <h2>3. Backend</h2>
+      <pre>backend/
+├── .env                 → Secretos reales (NO va a Git)
+├── .env.example         → Plantilla de secretos (sí va a Git)
+├── requirements.txt     → Librerías de Python
+└── app/
+    ├── main.py          → Arranca la API, configura CORS
+    ├── core/
+    │   ├── config.py    → Lee la configuración del .env
+    │   └── security.py  → Argon2 (contraseñas) y JWT (tokens)
+    ├── db/
+    │   └── database.py  → Conexión a la base de datos
+    ├── models/
+    │   └── user.py      → Tabla "users" (first_name, last_name, email,
+    │                       english_level A1–C2, hashed_password)
+    ├── schemas/
+    │   └── user.py      → Forma de los datos que entran/salen
+    └── routers/
+        └── auth.py      → Endpoints: /register, /login, /me</pre>
+      <h3>Modelo de usuario</h3>
+      <p>
+        Cada usuario guarda <code>first_name</code> y <code>last_name</code> por separado
+        (antes era un único <code>full_name</code>), el <code>email</code>, el
+        <code>english_level</code> (A1–C2, según el Marco Común Europeo) y el
+        <code>hashed_password</code>.
+      </p>
+
+      <h3>Flujo de una petición en el backend</h3>
+      <div class="flujo">
+        router (auth.py) → schema (valida datos) → security (cifra/verifica) →
+        model (tabla) → db (guarda o lee)
+      </div>
+    </section>
+
+    <section>
+      <h2>4. Endpoints disponibles</h2>
+      <table>
+        <tr><th>Método</th><th>Ruta</th><th>Qué hace</th></tr>
+        <tr><td>POST</td><td>/auth/register</td><td>Crea una cuenta. Rechaza correos duplicados.</td></tr>
+        <tr><td>POST</td><td>/auth/login</td><td>Verifica credenciales y devuelve un token JWT.</td></tr>
+        <tr><td>GET</td><td>/auth/me</td><td>Con el token, devuelve los datos del usuario.</td></tr>
+        <tr><td>GET</td><td>/</td><td>Comprueba que la API está viva.</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Cómo se conectan las dos capas</h2>
+      <pre>Usuario → Frontend (3000) → petición HTTP → Backend (8000) → Base de datos
+                          ← respuesta JSON ←</pre>
+      <div class="flujo">
+        <strong>Ejemplo (login):</strong> el usuario llena el formulario →
+        el frontend envía correo y contraseña a <code>/auth/login</code> →
+        el backend verifica y devuelve un token JWT →
+        el frontend guarda el token y lo usa en peticiones protegidas.
+      </div>
+    </section>
+
+    <section>
+      <h2>6. Conceptos clave</h2>
+      <table>
+        <tr><th>Concepto</th><th>Qué es</th></tr>
+        <tr><td>Argon2</td><td>Algoritmo que cifra la contraseña. Nunca se guarda la real.</td></tr>
+        <tr><td>JWT</td><td>"Pase" firmado que identifica al usuario sin reescribir la contraseña.</td></tr>
+        <tr><td>Pydantic</td><td>Valida los datos de entrada automáticamente.</td></tr>
+        <tr><td>CORS</td><td>Permiso para que el frontend (3000) hable con la API (8000).</td></tr>
+        <tr><td>Componente</td><td>Pieza reutilizable de interfaz (Navbar, Footer, Logo...).</td></tr>
+        <tr><td>Layout</td><td>Plantilla fija que envuelve a todas las páginas.</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>7. Estado del proyecto</h2>
+      <table>
+        <tr><th>Parte</th><th>Estado</th></tr>
+        <tr><td>Página principal (Navbar, Hero, Footer)</td><td class="listo">Listo</td></tr>
+        <tr><td>Logo reutilizable</td><td class="listo">Listo</td></tr>
+        <tr><td>Backend: registro, login, perfil</td><td class="listo">Listo</td></tr>
+        <tr><td>Formularios de login / registro (frontend)</td><td class="pendiente">Pendiente</td></tr>
+        <tr><td>Conexión frontend ↔ backend (authService)</td><td class="pendiente">Pendiente</td></tr>
+        <tr><td>Recuperar contraseña</td><td class="pendiente">Pendiente</td></tr>
+        <tr><td>Migración a PostgreSQL (nube o Docker)</td><td class="pendiente">Pendiente</td></tr>
+        <tr><td>Migraciones con Alembic</td><td class="pendiente">Pendiente</td></tr>
+      </table>
+    </section>
+
+    <footer>
+      Este documento se actualiza manualmente cada vez que cambia la arquitectura del proyecto.
+    </footer>
+  </main>
+</body>
+</html>
