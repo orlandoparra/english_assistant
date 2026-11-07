@@ -32,3 +32,9 @@ class User(Base):
     # Nunca guardamos la contraseña real, solo su "hash" (versión cifrada).
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    # Marca_Invalidacion: todo Token_Acceso emitido antes de este instante se
+    # considera inválido. NULL = sin invalidación (estado inicial). Se actualiza
+    # al cambiar o restablecer la contraseña para cerrar las sesiones anteriores.
+    tokens_valid_after: Mapped[datetime | None] = mapped_column(
+        DateTime, nullable=True, default=None
+    )

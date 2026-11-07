@@ -9,14 +9,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.database import Base, engine
+from app.db import migrate_password_security
 from app.models import user as user_model  # noqa: F401 (registra la tabla)
+from app.models import password_reset_token as reset_token_model  # noqa: F401 (registra la tabla)
 from app.routers import auth
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Al arrancar: crea las tablas si no existen.
+    # Al arrancar: añade columnas nuevas a tablas existentes (migración ligera
+    # idempotente) y crea las tablas que falten.
     # (Más adelante esto lo hará Alembic con migraciones.)
+    migrate_password_security.migrate(engine)
     Base.metadata.create_all(bind=engine)
     yield
 

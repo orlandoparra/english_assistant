@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Validaciones · English Assistant</title>
+  <style>
+    :root {
+      --azul-900: #0b2d6b;
+      --azul-700: #1565a6;
+      --azul-500: #1d6fd6;
+      --azul-logo: #1a4fb0;
+      --rojo: #ef2b2b;
+      --tinta: #0f172a;
+      --gris: #5f6080;
+      --suave: #f0f7ff;
+      --ok: #16a34a;
+      --ok-bg: #ecfdf5;
+      --mal: #dc2626;
+      --naranja: #f97316;
+      --borde: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      color: var(--tinta);
+      line-height: 1.6;
+      background: #eef2f7;
+    }
+
+    /* ---------- Encabezado dinámico ---------- */
+    header {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0b2d6b 0%, #1d6fd6 55%, #ef2b2b 130%);
+      color: #fff;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    header::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at top right, rgba(255,255,255,0.22), transparent 55%);
+      pointer-events: none;
+    }
+    .brand {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .brand .divider { width: 1px; height: 34px; background: rgba(255,255,255,0.3); }
+    .brand .txt { display: flex; flex-direction: column; line-height: 1.05; text-align: left; }
+    .brand .txt .t1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.18em; }
+    .brand .txt .t2 { font-size: 1.1rem; font-weight: 700; color: rgba(255,255,255,0.9); }
+    header h1 { position: relative; margin: 0 0 6px; font-size: 1.7rem; }
+    header p { position: relative; margin: 0; opacity: 0.9; }
+    header .meta { position: relative; margin-top: 10px; font-size: 0.85rem; opacity: 0.85; }
+
+    main { max-width: 980px; margin: 0 auto; padding: 8px 20px 40px; }
+
+    /* ---------- Tarjetas de módulo ---------- */
+    .modulo {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(11,45,107,0.08);
+      padding: 28px 30px;
+      margin: 28px 0;
+    }
+    .modulo > h2 {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--azul-500);
+      font-size: 1.4rem;
+      color: var(--azul-700);
+    }
+    .modulo > h2 .ico { font-size: 1.3rem; }
+    h3 {
+      display: flex; align-items: center; gap: 8px;
+      margin: 24px 0 10px; font-size: 1.05rem; color: var(--azul-700);
+    }
+
+    /* ---------- Bloques de contenido ---------- */
+    .caja {
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      background: #fbfcfe;
+    }
+    .caja ul { margin: 6px 0; padding-left: 20px; }
+    .caja li { margin: 4px 0; }
+
+    .banner {
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-weight: 600;
+    }
+    .banner.verde { background: var(--ok-bg); border-left: 4px solid var(--ok); color: #065f46; }
+    .banner.amarillo { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+    .banner.verde .sub, .banner.amarillo .sub { display: block; margin-top: 4px; font-weight: 400; font-size: 0.9rem; }
+
+    .porque {
+      margin: 10px 0;
+      padding: 12px 16px;
+      background: var(--suave);
+      border-radius: 10px;
+      font-size: 0.92rem;
+    }
+    .porque b { color: var(--azul-700); }
+
+    code {
+      background: #f1f5f9; padding: 1px 6px; border-radius: 4px;
+      font-family: Consolas, monospace; font-size: 0.9em;
+    }
+    .consola {
+      background: #0f172a; color: #e2e8f0;
+      border-radius: 10px; padding: 14px 18px; margin: 10px 0;
+      font-family: Consolas, monospace; font-size: 0.85rem; line-height: 1.8;
+      overflow-x: auto;
+    }
+    .consola .verde-txt { color: #4ade80; }
+
+    /* ---------- Tablas ---------- */
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+    th { background: var(--suave); color: var(--azul-700); }
+    .ok::before { content: "✓ "; color: var(--ok); font-weight: bold; }
+    .mal::before { content: "✗ "; color: var(--mal); font-weight: bold; }
+
+    /* ---------- Columnas válidas / inválidas ---------- */
+    .dos-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0; }
+    .lista-val { border: 1px solid var(--borde); border-radius: 12px; padding: 14px 16px; }
+    .lista-val h4 { margin: 0 0 10px; font-size: 0.95rem; }
+    .lista-val .fila {
+      background: #f8fafc; border-radius: 6px; padding: 7px 10px; margin: 6px 0;
+      font-family: Consolas, monospace; font-size: 0.82rem;
+    }
+    .chip { display: inline-block; margin-top: 8px; padding: 5px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; }
+    .chip.ok { background: var(--ok-bg); color: #065f46; border: 1px solid #a7f3d0; }
+    .chip.mal { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* ---------- Resumen ejecutivo ---------- */
+    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 16px; }
+    .card {
+      border-left: 4px solid var(--azul-500);
+      background: #f8fafc; border-radius: 10px; padding: 16px 18px;
+    }
+    .card h4 { margin: 0 0 6px; color: var(--azul-700); font-size: 1rem; }
+    .card p { margin: 0; font-size: 0.9rem; color: var(--gris); }
+
+    /* ---------- Demostración de campos (estados visuales) ---------- */
+    .campo-demo { position: relative; margin: 14px 0; }
+    .campo-demo input {
+      width: 100%; border-radius: 999px; padding: 12px 18px; font-size: 0.9rem;
+      border: 1px solid #cbd5e1; outline: none;
+    }
+    .campo-demo.valido input { border-color: var(--azul-500); background: rgba(29,111,214,0.05); }
+    .campo-demo.error input { border-color: var(--naranja); }
+    .campo-demo .flot {
+      position: absolute; top: 0; left: 16px; transform: translateY(-50%);
+      background: #fff; padding: 0 6px; font-size: 0.72rem; font-weight: 600;
+    }
+    .campo-demo.valido .flot { color: var(--azul-700); }
+    .campo-demo.error .flot { color: var(--mal); }
+    .campo-demo .ojo {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #64748b;
+    }
+    .globo {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 10px;
+      border: 1px solid #94a3b8; border-radius: 10px;
+      background: #fff; padding: 6px 12px 6px 6px;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.15); font-size: 0.85rem;
+    }
+    .globo .i {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 6px;
+      background: var(--naranja); color: #fff; font-weight: bold; font-size: 0.8rem;
+    }
+
+    /* ---------- Pie ---------- */
+    footer {
+      background: #0a2540; color: #94a3b8;
+      padding: 32px 24px; margin-top: 8px;
+    }
+    footer .wrap { max-width: 980px; margin: 0 auto; }
+    footer .cols { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 28px; }
+    footer h5 { color: #fff; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 12px; }
+    footer ul { list-style: none; margin: 0; padding: 0; font-size: 0.86rem; }
+    footer li { margin: 6px 0; }
+    footer .brand .txt .t1, footer .brand .txt .t2 { color: #fff; }
+    footer .brand .divider { background: rgba(255,255,255,0.25); }
+    footer .desc { font-size: 0.86rem; margin: 12px 0 0; max-width: 260px; }
+    footer .copy { border-top: 1px solid rgba(255,255,255,0.12); margin-top: 24px; padding-top: 16px; text-align: center; font-size: 0.78rem; }
+
+    @media (max-width: 680px) {
+      .dos-col, footer .cols { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <!-- Logo "EA" (SVG), igual que el de la app, con la A y "Assistant" en azul de marca -->
+      <svg width="52" height="34" viewBox="0 0 270 160" role="img" aria-label="English Assistant">
+        <defs><clipPath id="clip"><rect x="0" y="0" width="270" height="112" /></clipPath></defs>
+        <polygon points="0,0 128,0 109,28 0,28" fill="#ffffff" />
+        <path d="M0,67 L103,67 L84,95 L28,95 L28,130 L128,130 L109,160 L0,160 Z" fill="#ffffff" />
+        <polygon points="165,0 200,0 265,160 230,160" fill="rgba(255,255,255,0.88)" />
+        <polygon points="165,0 200,0 118,160 83,160" fill="rgba(255,255,255,0.88)" clip-path="url(#clip)" />
+      </svg>
+      <span class="divider"></span>
+      <span class="txt"><span class="t1">English</span><span class="t2">Assistant</span></span>
+    </div>
+    <h1>Sistema de Validaciones</h1>
+    <p>Guía del sistema de validación de los formularios de registro e inicio de sesión</p>
+    <div class="meta">Documento de referencia · refleja lo implementado en el proyecto</div>
+  </header>
+
+  <main>
+
+    <!-- ======================= 1. RESUMEN EJECUTIVO ======================= -->
+    <section class="modulo">
+      <h2><span class="ico">📋</span> Resumen Ejecutivo</h2>
+
+      <div class="banner verde">
+        ✅ Sistema de validación implementado en los formularios de autenticación
+        <span class="sub">Cubre registro (<code>/register</code>) e inicio de sesión (<code>/login</code>), con validación en el cliente y normalización también en el backend.</span>
+      </div>
+
+      <div class="grid-cards">
+        <div class="card">
+          <h4>Nombres inclusivos</h4>
+          <p>Acepta tildes, ñ, guiones y apóstrofes. Se capitalizan al salir del campo.</p>
+        </div>
+        <div class="card">
+          <h4>Correo estricto</h4>
+          <p>Solo caracteres válidos, sin espacios ni emojis, y bloquea dominios desechables.</p>
+        </div>
+        <div class="card">
+          <h4>Contraseña segura</h4>
+          <p>Mínimo 8 caracteres, 1 número y 1 mayúscula, con checklist en vivo.</p>
+        </div>
+        <div class="card">
+          <h4>Experiencia cuidada</h4>
+          <p>Globo de error naranja, campo válido en azul, etiqueta flotante y ojo para ver la contraseña.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= 2. NOMBRES Y APELLIDOS ======================= -->
+    <section class="modulo">
+      <h2><span class="ico">🧑</span> Validación de Nombres y Apellidos</h2>
+
+      <div class="banner verde">
+        🌍 Diseño inclusivo, pensado para nombres del mundo real
+        <span class="sub">El sistema acepta la diversidad de nombres sin bloquear a personas con nombres legítimos.</span>
+      </div>
+
+      <h3>✅ Caracteres permitidos</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Letras:</b> a-z, A-Z</li>
+          <li><b>Letras acentuadas:</b> á, é, í, ó, ú, ü, ñ, Ñ y el rango Latin Extended (À-ÿ)</li>
+          <li><b>Espacio:</b> para nombres compuestos (<code>María José</code>, <code>Jean Paul</code>)</li>
+          <li><b>Guion:</b> para apellidos compuestos (<code>Jean-Paul</code>, <code>García-López</code>)</li>
+          <li><b>Apóstrofe:</b> para apellidos irlandeses o franceses (<code>O'Connor</code>, <code>D'Angelo</code>)</li>
+        </ul>
+      </div>
+
+      <h3>✗ Caracteres bloqueados</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Números:</b> ningún nombre real los lleva (<code>Ana2</code>)</li>
+          <li><b>Símbolos:</b> <code>! @ # $ % * ( )</code>, etc.</li>
+          <li><b>Guion o apóstrofe al inicio o al final:</b> <code>-Juan</code>, <code>Ana'</code></li>
+          <li><b>Guion o apóstrofe doble:</b> <code>Juan--Carlos</code>, <code>O''Connor</code></li>
+        </ul>
+      </div>
+
+      <h3>📏 Longitud</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Mínimo:</b> 2 letras, para aceptar nombres cortos reales (<code>Ed</code>, <code>Bo</code>, <code>Li</code>)</li>
+          <li><b>Máximo:</b> no se limita en el cliente (el backend sí acota a 60 caracteres)</li>
+        </ul>
+      </div>
+
+      <div class="dos-col">
+        <div class="lista-val">
+          <h4 class="ok">Nombres válidos</h4>
+          <div class="fila">María José</div>
+          <div class="fila">O'Connor</div>
+          <div class="fila">Jean-Paul</div>
+          <div class="fila">Ángel</div>
+          <div class="fila">Ed</div>
+          <div class="fila">García-López</div>
+          <span class="chip ok">✓ Aceptados</span>
+        </div>
+        <div class="lista-val">
+          <h4 class="mal">Nombres inválidos</h4>
+          <div class="fila">Juan123 (números)</div>
+          <div class="fila">Ana@gmail (símbolo)</div>
+          <div class="fila">-Carlos (empieza con guion)</div>
+          <div class="fila">Juan--Carlos (guion doble)</div>
+          <div class="fila">J (1 carácter)</div>
+          <span class="chip mal">✗ Rechazados</span>
+        </div>
+      </div>
+
+      <h3>🔤 Espacios y capitalización</h3>
+      <div class="caja">
+        <p>
+          No se admite espacio al inicio, y dos espacios seguidos pasan a uno solo. Un espacio
+          entre palabras sí se permite. Al salir del campo, el texto se capitaliza.
+        </p>
+        <div class="consola">"ORLANDO" → "Orlando"   ·   "maría josé" → "María José"   ·   "o'brien" → "O'Brien"</div>
+      </div>
+      <div class="porque">
+        <b>¿Por qué?</b> Un espacio entre palabras es válido porque existen nombres como
+        <b>"María José"</b>. Pero un espacio al inicio o dos seguidos casi siempre son un error
+        de tecleo, así que se corrigen solos. La capitalización deja el nombre presentable sin
+        obligar a escribir con mayúsculas.
+      </div>
+
+      <h3>🔄 Orden del mensaje con número y símbolo</h3>
+      <div class="caja">
+        <p>El mensaje nombra primero lo que se escribió primero:</p>
+        <ul>
+          <li><code>!2</code> → "No se permiten caracteres especiales ni números."</li>
+          <li><code>2!</code> → "No se permiten números ni caracteres especiales."</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================= 3. EMAIL ======================= -->
+    <section class="modulo">
+      <h2><span class="ico">📧</span> Validación de Email</h2>
+
+      <h3>✅ Caracteres permitidos</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Letras:</b> a-z, A-Z (el sistema las convierte a minúsculas)</li>
+          <li><b>Números:</b> 0-9</li>
+          <li><b>Antes del <code>@</code>:</b> <code>.</code> punto, <code>_</code> guion bajo, <code>-</code> guion, <code>+</code> más</li>
+          <li><b>Símbolo obligatorio:</b> <code>@</code></li>
+          <li><b>Dominio:</b> letras, números, puntos y guiones</li>
+        </ul>
+      </div>
+
+      <h3>🚫 No permitido</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Espacios:</b> en ninguna posición, ni al escribir ni al pegar</li>
+          <li><b>Emojis y caracteres no ASCII:</b> 😀, tildes, ñ (no valen en un correo)</li>
+          <li><b>Símbolos extraños antes del <code>@</code>:</b> <code>! # $ % &amp; * = ? ^</code>, comillas, <code>;</code>, <code>,</code></li>
+          <li><b>Más de un <code>@</code></b> o dos puntos seguidos (<code>..</code>)</li>
+        </ul>
+      </div>
+
+      <h3>🌐 Reglas del dominio</h3>
+      <div class="caja">
+        <ul>
+          <li>Debe contener al menos un punto (<code>.</code>)</li>
+          <li>La extensión tras el último punto debe tener 2 letras o más</li>
+          <li>Ninguna parte del dominio empieza ni termina con guion</li>
+          <li>No se aceptan dominios de correo temporal o desechable</li>
+        </ul>
+      </div>
+
+      <div class="dos-col">
+        <div class="lista-val">
+          <h4 class="ok">Correos válidos</h4>
+          <div class="fila">maria@gmail.com</div>
+          <div class="fila">orlando.parra@outlook.com</div>
+          <div class="fila">user+tag@yahoo.com</div>
+          <div class="fila">test_user@hotmail.com</div>
+          <div class="fila">info@mi-empresa.com</div>
+          <span class="chip ok">✓ Aceptados</span>
+        </div>
+        <div class="lista-val">
+          <h4 class="mal">Correos inválidos</h4>
+          <div class="fila">maria lopez@gmail.com (espacio)</div>
+          <div class="fila">user@-.com (guion solo)</div>
+          <div class="fila">test@s (sin punto)</div>
+          <div class="fila">user@😀domain.com (emoji)</div>
+          <div class="fila">user@mailinator.com (desechable)</div>
+          <span class="chip mal">✗ Rechazados</span>
+        </div>
+      </div>
+
+      <h3>🔁 Conversión automática a minúsculas</h3>
+      <div class="caja">
+        <p>El correo se pasa a minúsculas mientras se escribe, sin importar cómo se teclee.</p>
+        <div class="consola">"ORLANDO@GMAIL.COM" → "orlando@gmail.com"   ·   "User@Outlook.COM" → "user@outlook.com"</div>
+      </div>
+      <div class="porque">
+        <b>¿Por qué?</b> Evita cuentas duplicadas por mayúsculas: <code>Ana@x.com</code> y
+        <code>ana@x.com</code> deben ser la misma. El backend también guarda y busca el correo
+        en minúsculas, para que registro e inicio de sesión coincidan.
+      </div>
+
+      <h3>💡 Sugerencia de dominio mal escrito</h3>
+      <div class="caja">
+        <p>Si el dominio parece un error de tecleo de uno habitual, al salir del campo se ofrece la corrección con un clic.</p>
+        <div class="consola">"ana@gmial.com" → ¿Quisiste decir ana@gmail.com?   ·   "ana@hotmal.com" → ¿Quisiste decir ana@hotmail.com?</div>
+      </div>
+      <div class="porque">
+        <b>¿Por qué?</b> El error más común al escribir un correo está en el dominio. Se compara
+        contra los dominios habituales con una distancia de edición de 1 (una letra cambiada,
+        sobrante, faltante o dos intercambiadas). Es solo una ayuda: no bloquea el envío.
+      </div>
+
+      <div class="porque">
+        <b>Detalle técnico del espacio:</b> el campo usa <code>type="text"</code> con
+        <code>inputMode="email"</code>, no <code>type="email"</code>. El tipo <code>email</code>
+        recorta los espacios de los extremos antes de que el código los vea; con <code>text</code>
+        recibimos el texto real y podemos impedir el espacio, mientras <code>inputMode="email"</code>
+        mantiene el teclado de correo en el móvil.
+      </div>
+    </section>
+
+    <!-- ======================= 4. CONTRASEÑA ======================= -->
+    <section class="modulo">
+      <h2><span class="ico">🔒</span> Validación de Contraseña</h2>
+
+      <div class="banner amarillo">
+        ⚠️ Requisitos obligatorios: no se puede crear la cuenta sin cumplirlos.
+      </div>
+
+      <h3>✅ Reglas obligatorias</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Entre 8 y 128 caracteres</b></li>
+          <li><b>Al menos 1 número</b> (0-9)</li>
+          <li><b>Al menos 1 mayúscula</b> (A-Z, incluye letras acentuadas)</li>
+        </ul>
+      </div>
+
+      <h3>🔤 Caracteres permitidos</h3>
+      <div class="caja">
+        <ul>
+          <li>Letras minúsculas y mayúsculas</li>
+          <li>Números</li>
+          <li>Cualquier símbolo: <code>! @ # $ % * - _</code>, etc.</li>
+          <li>No hay transformación: se respeta tal cual se escribe (salvo los espacios, que no se admiten)</li>
+        </ul>
+      </div>
+
+      <div class="dos-col">
+        <div class="lista-val">
+          <h4 class="ok">Contraseñas válidas</h4>
+          <div class="fila">Holoedu1</div>
+          <div class="fila">English2026</div>
+          <div class="fila">MiClave#9</div>
+          <div class="fila">Aprender1ingles</div>
+          <span class="chip ok">✓ Cumplen los 3 requisitos</span>
+        </div>
+        <div class="lista-val">
+          <h4 class="mal">Contraseñas inválidas</h4>
+          <div class="fila">holoedu1 (sin mayúscula)</div>
+          <div class="fila">Holoedu (sin número)</div>
+          <div class="fila">Holo1 (menos de 8)</div>
+          <div class="fila">Holo edu1 (tiene espacio)</div>
+          <span class="chip mal">✗ Rechazadas</span>
+        </div>
+      </div>
+
+      <h3>💡 Checklist en vivo</h3>
+      <div class="caja">
+        <p>Bajo el campo se muestran los tres requisitos. Cada uno pasa de gris a verde al cumplirse.</p>
+        <div class="consola">8 caracteres · 1 número · 1 mayúscula  →  en gris hasta cumplirse  →  <span class="verde-txt">✓ verde al cumplirse</span></div>
+      </div>
+
+      <h3>🧹 Limpieza al pegar</h3>
+      <div class="caja">
+        <p>La contraseña del registro no admite espacios. Al pegar, se quitan saltos de línea y los espacios de los extremos (típico al copiar desde un archivo de texto).</p>
+      </div>
+      <div class="porque">
+        <b>¿Por qué?</b> Los espacios o saltos invisibles arrastrados al pegar son una causa
+        habitual de "no puedo entrar" y no aportan seguridad. El checklist, en lugar de un
+        mensaje de error, guía sin regañar.
+      </div>
+    </section>
+
+    <!-- ======================= 5. ESTADOS VISUALES ======================= -->
+    <section class="modulo">
+      <h2><span class="ico">🎨</span> Estados Visuales del Sistema</h2>
+
+      <h3>🔵 Campo válido</h3>
+      <div class="campo-demo valido">
+        <span class="flot">Correo electrónico</span>
+        <input value="orlando@gmail.com" readonly />
+      </div>
+      <p style="font-size:.88rem;color:var(--gris)">Borde azul de marca + fondo azul muy claro (azul al 5%).</p>
+
+      <h3>🟠 Campo con error</h3>
+      <div class="campo-demo error">
+        <span class="flot">Correo electrónico</span>
+        <input value="usuario@-.com" readonly />
+      </div>
+      <div class="globo"><span class="i">!</span> El dominio no puede empezar ni terminar con guion.</div>
+      <p style="font-size:.88rem;color:var(--gris);margin-top:10px">Borde naranja y globo flotante con el mensaje.</p>
+
+      <h3>💬 Globo de error</h3>
+      <div class="caja">
+        <ul>
+          <li>Aparece bajo el campo al pulsar el botón, solo en el primer campo con error</li>
+          <li>Icono naranja con "!" a la izquierda</li>
+          <li>Para correos con error de dominio, ofrece el enlace "¿Quisiste decir ...?"</li>
+          <li>Desaparece al escribir en ese campo</li>
+        </ul>
+      </div>
+
+      <h3>🏷️ Etiqueta flotante</h3>
+      <div class="caja">
+        <p>La etiqueta empieza dentro del campo como un placeholder y, al escribir o enfocar, sube y se apoya sobre el borde superior. Así el usuario nunca pierde de vista qué campo está llenando.</p>
+      </div>
+
+      <h3>👁️ Botón ver/ocultar contraseña</h3>
+      <div class="caja">
+        <p>Un único ojo dentro del campo de contraseña (se oculta el botón nativo del navegador):</p>
+        <div class="consola">Contraseña oculta → ojo relleno con brillo   ·   Contraseña visible → ojo tachado con una línea diagonal</div>
+      </div>
+      <div class="porque">
+        <b>Diferencia con el proyecto anterior:</b> allí el campo válido se pintaba de verde. Aquí
+        se usa el azul de marca con fondo azul suave, para ser coherente con el resto de la app.
+      </div>
+    </section>
+
+    <!-- ======================= 6. ARQUITECTURA TÉCNICA ======================= -->
+    <section class="modulo">
+      <h2><span class="ico">⚙️</span> Arquitectura Técnica</h2>
+
+      <div class="caja">
+        <p><b>Archivos principales (frontend):</b></p>
+        <ul>
+          <li><code>src/lib/validation.ts</code> — reglas puras de validación (nombre, correo, contraseña)</li>
+          <li><code>src/lib/inputCleaning.ts</code> — limpieza de lo que se escribe o pega (minúsculas, espacios, capitalización)</li>
+          <li><code>src/components/auth/FloatingField.tsx</code> — campo con etiqueta flotante, ojo y globo de error</li>
+          <li><code>src/components/auth/FloatingSelect.tsx</code> — selector de nivel con el mismo estilo</li>
+          <li><code>src/app/register/page.tsx</code> y <code>src/app/login/page.tsx</code> — formularios</li>
+        </ul>
+        <p style="margin-top:10px"><b>Backend:</b> <code>app/schemas/user.py</code> valida el formato del correo y la longitud de la contraseña, y normaliza el correo a minúsculas.</p>
+      </div>
+
+      <div class="grid-cards">
+        <div class="card">
+          <h4>Limpieza al escribir</h4>
+          <p>Nombre y apellido: sin espacio inicial y sin espacios dobles. Correo: minúsculas y sin espacios. Contraseña: sin espacios.</p>
+        </div>
+        <div class="card">
+          <h4>Validación al enviar</h4>
+          <p>Si algún campo no cumple, se muestra el globo del primer error y no se envía el formulario.</p>
+        </div>
+        <div class="card">
+          <h4>Campo válido en azul</h4>
+          <p>Cuando un campo es válido, el borde toma el azul de marca y el fondo un azul muy claro.</p>
+        </div>
+        <div class="card">
+          <h4>Capitalización al salir</h4>
+          <p>Nombre y apellido se capitalizan al perder el foco; el correo se sugiere corregir si el dominio parece mal escrito.</p>
+        </div>
+      </div>
+
+      <div class="porque">
+        <b>Nota de seguridad:</b> estas validaciones del navegador mejoran la experiencia pero no
+        son una barrera de seguridad; quien llame a la API directamente se las salta. El bloqueo de
+        dominios desechables y las reglas de composición de la contraseña aún no están replicados
+        en el backend.
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= PIE ======================= -->
+  <footer>
+    <div class="wrap">
+      <div class="cols">
+        <div>
+          <div class="brand">
+            <svg width="44" height="29" viewBox="0 0 270 160" role="img" aria-label="English Assistant">
+              <defs><clipPath id="clipF"><rect x="0" y="0" width="270" height="112" /></clipPath></defs>
+              <polygon points="0,0 128,0 109,28 0,28" fill="#ffffff" />
+              <path d="M0,67 L103,67 L84,95 L28,95 L28,130 L128,130 L109,160 L0,160 Z" fill="#ffffff" />
+              <polygon points="165,0 200,0 265,160 230,160" fill="rgba(255,255,255,0.85)" />
+              <polygon points="165,0 200,0 118,160 83,160" fill="rgba(255,255,255,0.85)" clip-path="url(#clipF)" />
+            </svg>
+            <span class="divider"></span>
+            <span class="txt"><span class="t1">English</span><span class="t2">Assistant</span></span>
+          </div>
+          <p class="desc">Transformando vidas a través de la educación de idiomas de calidad.</p>
+        </div>
+        <div>
+          <h5>Documento</h5>
+          <ul>
+            <li>Validación de nombres</li>
+            <li>Validación de correo</li>
+            <li>Validación de contraseña</li>
+            <li>Estados visuales</li>
+          </ul>
+        </div>
+        <div>
+          <h5>Proyecto</h5>
+          <ul>
+            <li>Frontend: Next.js 16 · React 19</li>
+            <li>Estilos: Tailwind CSS v4</li>
+            <li>Backend: FastAPI</li>
+          </ul>
+        </div>
+      </div>
+      <div class="copy">© 2026 Orlando Parra Vargas · English Assistant</div>
+    </div>
+  </footer>
+</body>
+</html>

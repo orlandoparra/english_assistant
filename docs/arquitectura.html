@@ -160,22 +160,45 @@
     ├── main.py          → Arranca la API, configura CORS
     ├── core/
     │   ├── config.py    → Lee la configuración del .env
-    │   └── security.py  → Argon2 (contraseñas) y JWT (tokens)
+    │   ├── security.py  → Argon2 (contraseñas), JWT con iat (tokens) y
+    │   │                   hash SHA-256 del token de restablecimiento
+    │   ├── email.py     → Servicio_Correo: entrega del enlace de restablecimiento
+    │   │                   (en desarrollo lo registra en consola; interfaz lista
+    │   │                   para un proveedor real: SMTP, SendGrid, Resend)
+    │   └── rate_limit.py→ Rate limiter en memoria (ventana deslizante 15 min,
+    │                       máx. 5 solicitudes por correo) para /auth/forgot-password
     ├── db/
-    │   └── database.py  → Conexión a la base de datos
+    │   ├── database.py  → Conexión a la base de datos
+    │   ├── user_name_split.py           → split_full_name (nombre/apellido)
+    │   ├── migrate_user_names.py        → Migración full_name → first/last + english_level
+    │   └── migrate_password_security.py → Migración: añade users.tokens_valid_after
     ├── models/
-    │   └── user.py      → Tabla "users" (first_name, last_name, email,
-    │                       english_level A1–C2, hashed_password)
+    │   ├── user.py      → Tabla "users" (first_name, last_name, email,
+    │   │                   english_level A1–C2, hashed_password, tokens_valid_after)
+    │   └── password_reset_token.py → Tabla "password_reset_tokens"
+    │                       (hash SHA-256 del token, caducidad, un solo uso)
     ├── schemas/
     │   └── user.py      → Forma de los datos que entran/salen
     └── routers/
-        └── auth.py      → Endpoints: /register, /login, /me</pre>
+        └── auth.py      → Endpoints: /register, /login, /me,
+                           /forgot-password, /reset-password, /change-password</pre>
       <h3>Modelo de usuario</h3>
       <p>
         Cada usuario guarda <code>first_name</code> y <code>last_name</code> por separado
         (antes era un único <code>full_name</code>), el <code>email</code>, el
         <code>english_level</code> (A1–C2, según el Marco Común Europeo) y el
-        <code>hashed_password</code>.
+        <code>hashed_password</code>. Además incluye <code>tokens_valid_after</code>
+        (la Marca de invalidación): todo token emitido antes de ese instante deja de
+        ser válido al cambiar o restablecer la contraseña.
+      </p>
+
+      <h3>Migraciones sin Alembic</h3>
+      <p>
+        El proyecto usa SQLite sin Alembic. <code>Base.metadata.create_all</code> crea
+        las tablas nuevas, pero no altera las ya existentes. Por eso los cambios de
+        columnas sobre tablas creadas (por ejemplo <code>users.tokens_valid_after</code>)
+        se aplican con scripts de migración idempotentes y transaccionales en
+        <code>app/db/</code> que solo actúan si falta la columna.
       </p>
 
       <h3>Flujo de una petición en el backend</h3>
@@ -192,6 +215,9 @@
         <tr><td>POST</td><td>/auth/register</td><td>Crea una cuenta. Rechaza correos duplicados.</td></tr>
         <tr><td>POST</td><td>/auth/login</td><td>Verifica credenciales y devuelve un token JWT.</td></tr>
         <tr><td>GET</td><td>/auth/me</td><td>Con el token, devuelve los datos del usuario.</td></tr>
+        <tr><td>POST</td><td>/auth/forgot-password</td><td>Genera un token de restablecimiento y envía el enlace (anti-enumeración + rate limit). Responde siempre igual.</td></tr>
+        <tr><td>POST</td><td>/auth/reset-password</td><td>Restablece la contraseña con un token de un solo uso e invalida las sesiones anteriores.</td></tr>
+        <tr><td>POST</td><td>/auth/change-password</td><td>Cambia la contraseña del usuario autenticado tras verificar la actual e invalida las sesiones anteriores.</td></tr>
         <tr><td>GET</td><td>/</td><td>Comprueba que la API está viva.</td></tr>
       </table>
     </section>
@@ -213,7 +239,9 @@
       <table>
         <tr><th>Concepto</th><th>Qué es</th></tr>
         <tr><td>Argon2</td><td>Algoritmo que cifra la contraseña. Nunca se guarda la real.</td></tr>
-        <tr><td>JWT</td><td>"Pase" firmado que identifica al usuario sin reescribir la contraseña.</td></tr>
+        <tr><td>JWT</td><td>"Pase" firmado que identifica al usuario sin reescribir la contraseña. Incluye <code>iat</code> (instante de emisión).</td></tr>
+        <tr><td>iat + Marca de invalidación</td><td>El token lleva su hora de emisión; si el usuario cambia o restablece su contraseña, los tokens emitidos antes de ese instante dejan de ser válidos (expulsa sesiones anteriores).</td></tr>
+        <tr><td>Hash del token de restablecimiento</td><td>El token de recuperación se guarda cifrado (SHA-256), nunca en texto plano, para que una filtración de la base de datos no exponga tokens usables.</td></tr>
         <tr><td>Pydantic</td><td>Valida los datos de entrada automáticamente.</td></tr>
         <tr><td>CORS</td><td>Permiso para que el frontend (3000) hable con la API (8000).</td></tr>
         <tr><td>Componente</td><td>Pieza reutilizable de interfaz (Navbar, Footer, Logo...).</td></tr>
@@ -230,7 +258,7 @@
         <tr><td>Backend: registro, login, perfil</td><td class="listo">Listo</td></tr>
         <tr><td>Formularios de login / registro (frontend)</td><td class="listo">Listo</td></tr>
         <tr><td>Conexión frontend ↔ backend (api.ts + AuthContext)</td><td class="listo">Listo</td></tr>
-        <tr><td>Recuperar contraseña</td><td class="pendiente">Pendiente</td></tr>
+        <tr><td>Recuperar / cambiar contraseña (capa de seguridad)</td><td class="pendiente">En progreso</td></tr>
         <tr><td>Migración a PostgreSQL (nube o Docker)</td><td class="pendiente">Pendiente</td></tr>
         <tr><td>Migraciones con Alembic</td><td class="pendiente">Pendiente</td></tr>
       </table>

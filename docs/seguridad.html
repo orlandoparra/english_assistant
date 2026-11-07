@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seguridad y Tokens · English Assistant</title>
+  <style>
+    :root {
+      --azul-900: #0b2d6b;
+      --azul-700: #1565a6;
+      --azul-500: #1d6fd6;
+      --rojo: #ef2b2b;
+      --tinta: #0f172a;
+      --gris: #5f6080;
+      --suave: #f0f7ff;
+      --ok: #16a34a;
+      --mal: #dc2626;
+      --borde: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; color: var(--tinta); line-height: 1.6; background: #eef2f7; }
+
+    header {
+      position: relative; overflow: hidden; text-align: center;
+      background: linear-gradient(135deg, #0b2d6b 0%, #1d6fd6 55%, #ef2b2b 130%);
+      color: #fff; padding: 48px 24px;
+    }
+    header::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at top right, rgba(255,255,255,0.22), transparent 55%); pointer-events: none; }
+    .brand { position: relative; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .brand .divider { width: 1px; height: 34px; background: rgba(255,255,255,0.3); }
+    .brand .txt { display: flex; flex-direction: column; line-height: 1.05; text-align: left; }
+    .brand .txt .t1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.18em; }
+    .brand .txt .t2 { font-size: 1.1rem; font-weight: 700; color: rgba(255,255,255,0.9); }
+    header h1 { position: relative; margin: 0 0 6px; font-size: 1.7rem; }
+    header p { position: relative; margin: 0; opacity: 0.9; }
+    header .meta { position: relative; margin-top: 10px; font-size: 0.85rem; opacity: 0.85; }
+
+    main { max-width: 980px; margin: 0 auto; padding: 8px 20px 40px; }
+    .modulo { background: #fff; border-radius: 18px; box-shadow: 0 10px 30px rgba(11,45,107,0.08); padding: 28px 30px; margin: 28px 0; }
+    .modulo > h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; padding-bottom: 10px; border-bottom: 2px solid var(--azul-500); font-size: 1.4rem; color: var(--azul-700); }
+    h3 { margin: 24px 0 10px; font-size: 1.05rem; color: var(--azul-700); }
+
+    .caja { border: 1px solid var(--borde); border-radius: 12px; padding: 14px 18px; margin: 12px 0; background: #fbfcfe; }
+    .caja ul { margin: 6px 0; padding-left: 20px; } .caja li { margin: 5px 0; }
+    .porque { margin: 12px 0; padding: 12px 16px; background: var(--suave); border-radius: 10px; font-size: 0.92rem; }
+    .porque b { color: var(--azul-700); }
+    .banner { border-radius: 12px; padding: 14px 18px; margin: 12px 0; }
+    .banner.amarillo { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+    .banner.azul { background: var(--suave); border-left: 4px solid var(--azul-500); }
+
+    code { background: #f1f5f9; padding: 1px 6px; border-radius: 4px; font-family: Consolas, monospace; font-size: 0.9em; }
+    .consola { background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 14px 18px; margin: 10px 0; font-family: Consolas, monospace; font-size: 0.82rem; line-height: 1.7; overflow-x: auto; word-break: break-all; }
+
+    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-top: 16px; }
+    .card { border-left: 4px solid var(--azul-500); background: #f8fafc; border-radius: 10px; padding: 16px 18px; }
+    .card h4 { margin: 0 0 6px; color: var(--azul-700); font-size: 1rem; }
+    .card p { margin: 0; font-size: 0.9rem; color: var(--gris); }
+
+    /* pasos del flujo */
+    .pasos { background: #f8fafc; border-radius: 12px; padding: 18px; margin: 12px 0; }
+    .paso { display: flex; gap: 14px; align-items: flex-start; background: #fff; border-radius: 10px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(15,23,42,0.05); }
+    .paso .n { flex: 0 0 28px; height: 28px; border-radius: 50%; background: var(--azul-500); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; }
+    .paso .txt b { display: block; }
+    .paso .txt span { font-size: 0.88rem; color: var(--gris); }
+    .flecha { text-align: center; color: var(--azul-500); font-size: 1.1rem; margin: 6px 0; }
+
+    /* estructura JWT */
+    .jwt-parte { background: #fff; border: 1px solid var(--borde); border-radius: 10px; padding: 14px 16px; margin: 10px 0; }
+    .jwt-parte .n { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: var(--azul-500); color: #fff; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
+
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--borde); }
+    th { background: var(--suave); color: var(--azul-700); }
+    .si { color: var(--ok); font-weight: 600; } .no { color: var(--mal); font-weight: 600; }
+
+    footer { background: #0a2540; color: #94a3b8; padding: 28px 24px; }
+    footer .wrap { max-width: 980px; margin: 0 auto; text-align: center; }
+    footer .copy { font-size: 0.8rem; }
+
+    @media (max-width: 680px) { .consola { font-size: 0.72rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <svg width="52" height="34" viewBox="0 0 270 160" role="img" aria-label="English Assistant">
+        <defs><clipPath id="clip"><rect x="0" y="0" width="270" height="112" /></clipPath></defs>
+        <polygon points="0,0 128,0 109,28 0,28" fill="#ffffff" />
+        <path d="M0,67 L103,67 L84,95 L28,95 L28,130 L128,130 L109,160 L0,160 Z" fill="#ffffff" />
+        <polygon points="165,0 200,0 265,160 230,160" fill="rgba(255,255,255,0.88)" />
+        <polygon points="165,0 200,0 118,160 83,160" fill="rgba(255,255,255,0.88)" clip-path="url(#clip)" />
+      </svg>
+      <span class="divider"></span>
+      <span class="txt"><span class="t1">English</span><span class="t2">Assistant</span></span>
+    </div>
+    <h1>Seguridad y Tokens</h1>
+    <p>Cómo se protegen las contraseñas (hash Argon2) y cómo funciona la sesión (token JWT)</p>
+    <div class="meta">Documento de referencia · refleja lo implementado en el backend (FastAPI)</div>
+  </header>
+
+  <main>
+
+    <!-- 1. OBJETIVOS -->
+    <section class="modulo">
+      <h2>🎯 Objetivos del sistema de seguridad</h2>
+      <div class="grid-cards">
+        <div class="card"><h4>🛡️ Proteger los datos</h4><p>La contraseña nunca se guarda tal cual; solo su hash irreversible.</p></div>
+        <div class="card"><h4>🔐 Sesión segura</h4><p>Tras el login, un token firmado identifica al usuario en cada petición.</p></div>
+        <div class="card"><h4>⚡ Acceso sin estado</h4><p>El token lleva la info necesaria, así el servidor no guarda sesiones.</p></div>
+        <div class="card"><h4>🌐 Base moderna</h4><p>Algoritmos recomendados hoy (Argon2, JWT HS256).</p></div>
+      </div>
+      <h3>¿Por qué se hace así?</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Privacidad:</b> nadie puede ver las contraseñas, ni siquiera quien administra la base de datos.</li>
+          <li><b>Estándares:</b> se siguen prácticas recomendadas (OWASP para el hash, RFC 7519 para el token).</li>
+          <li><b>Confianza:</b> aunque la base de datos se filtrara, las contraseñas no quedarían expuestas.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. HASH DE CONTRASEÑA -->
+    <section class="modulo">
+      <h2>🔒 Hash de contraseñas (Argon2)</h2>
+
+      <div class="banner amarillo">
+        La contraseña real <b>nunca</b> se guarda. Solo se almacena su hash, y de un hash no se puede volver a la contraseña.
+      </div>
+
+      <h3>Flujo al registrarse</h3>
+      <div class="pasos">
+        <div class="paso"><span class="n">1</span><div class="txt"><b>El usuario escribe su contraseña</b><span>Ejemplo: <code>MiClave123</code></span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">2</span><div class="txt"><b>El sistema aplica Argon2</b><span>Proceso de hashing irreversible, con salt único por usuario</span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">3</span><div class="txt"><b>Se guarda solo el hash</b><span><code>$argon2id$v=19$m=65536,t=3,p=4$...</code> · nadie puede ver la contraseña original</span></div></div>
+      </div>
+
+      <h3>Características</h3>
+      <div class="caja">
+        <ul>
+          <li>✅ <b>Argon2</b>, el algoritmo de hashing de contraseñas recomendado actualmente (ganador del Password Hashing Competition).</li>
+          <li>✅ <b>Irreversible:</b> no existe forma de "descifrar" el hash para obtener la contraseña.</li>
+          <li>✅ <b>Salt único por usuario:</b> dos personas con la misma contraseña tienen hashes distintos.</li>
+          <li>✅ <b>Lento a propósito:</b> dificulta los ataques de fuerza bruta.</li>
+        </ul>
+      </div>
+      <div class="porque">
+        <b>¿Cómo se verifica al entrar?</b> No se "descifra" el hash. Se vuelve a hashear la
+        contraseña que escribe el usuario y se compara con el hash guardado. Si coinciden, la
+        contraseña es correcta. Esto lo hace <code>verify_password()</code> en
+        <code>app/core/security.py</code>.
+      </div>
+    </section>
+
+    <!-- 3. QUÉ ES JWT -->
+    <section class="modulo">
+      <h2>🔑 ¿Qué es un token JWT?</h2>
+      <p>
+        <b>JWT (JSON Web Token)</b> es un estándar abierto (RFC 7519) para transmitir información
+        de forma compacta y verificable entre el frontend y el backend. Al iniciar sesión, el
+        backend crea un token firmado; el frontend lo guarda y lo envía en cada petición
+        protegida para demostrar quién es el usuario.
+      </p>
+
+      <h3>Estructura</h3>
+      <p>Un JWT tiene tres partes separadas por puntos: <code>header.payload.signature</code>.</p>
+      <div class="consola">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbmFAZ21haWwuY29tIiwiZXhwIjoxNzMwMH0.Kq3b...firma</div>
+
+      <div class="jwt-parte"><span class="n">1</span><b>HEADER (encabezado)</b><br />Indica el tipo y el algoritmo de firma.<div class="consola">{ "alg": "HS256", "typ": "JWT" }</div></div>
+      <div class="jwt-parte"><span class="n">2</span><b>PAYLOAD (datos)</b><br />En nuestro caso lleva el correo del usuario (<code>sub</code>) y la caducidad (<code>exp</code>).<div class="consola">{ "sub": "ana@gmail.com", "exp": 1730001234 }</div></div>
+      <div class="jwt-parte"><span class="n">3</span><b>SIGNATURE (firma)</b><br />Garantiza que el token no fue modificado. Se calcula con la clave secreta del servidor.<div class="consola">HMACSHA256(header + payload, SECRET_KEY)</div></div>
+
+      <div class="porque">
+        <b>Importante:</b> el payload va codificado en Base64, <b>no cifrado</b>. Cualquiera puede
+        leerlo, así que nunca se ponen datos sensibles (ni la contraseña). Lo que impide
+        falsificar un token es la <b>firma</b>: sin la clave secreta del servidor no se puede
+        generar una firma válida.
+      </div>
+    </section>
+
+    <!-- 4. FLUJO DE LOGIN -->
+    <section class="modulo">
+      <h2>🔓 Flujo completo de inicio de sesión</h2>
+      <div class="pasos">
+        <div class="paso"><span class="n">1</span><div class="txt"><b>El usuario ingresa sus credenciales</b><span>Correo y contraseña</span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">2</span><div class="txt"><b>El frontend las envía al backend</b><span><code>POST /auth/login</code></span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">3</span><div class="txt"><b>El backend verifica la contraseña</b><span>Re-hashea lo recibido y lo compara con el hash guardado</span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">4</span><div class="txt"><b>¿Coincide?</b><span>Si no, responde <code>401</code> "Correo o contraseña incorrectos"</span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">5</span><div class="txt"><b>El backend genera el token JWT</b><span>Firmado con la clave secreta, válido por 30 minutos</span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">6</span><div class="txt"><b>Responde al frontend</b><span><code>{ "access_token": "eyJ...", "token_type": "bearer" }</code></span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">7</span><div class="txt"><b>El frontend guarda el token</b><span><code>localStorage</code> si marcó "Recordarme"; <code>sessionStorage</code> si no</span></div></div>
+        <div class="flecha">↓</div>
+        <div class="paso"><span class="n">8</span><div class="txt"><b>Usuario autenticado</b><span>En cada petición protegida envía <code>Authorization: Bearer &lt;token&gt;</code> y accede al panel</span></div></div>
+      </div>
+    </section>
+
+    <!-- 5. SIN vs CON HASH -->
+    <section class="modulo">
+      <h2>🛡️ Con hash frente a sin hash</h2>
+      <table>
+        <tr><th>Aspecto</th><th>Sin hash (texto plano)</th><th>Con hash (English Assistant)</th></tr>
+        <tr><td>Contraseña en la base de datos</td><td><code>MiClave123</code></td><td><code>$argon2id$v=19$...</code></td></tr>
+        <tr><td>¿La puede ver quien administra?</td><td class="no">Sí, peligroso</td><td class="si">No</td></tr>
+        <tr><td>Si se filtra la base de datos</td><td class="no">Quedan expuestas</td><td class="si">Siguen protegidas</td></tr>
+        <tr><td>¿Se puede recuperar la original?</td><td class="no">Sí</td><td class="si">No, es irreversible</td></tr>
+        <tr><td>Cumple estándares (OWASP)</td><td class="no">No</td><td class="si">Sí</td></tr>
+      </table>
+    </section>
+
+    <!-- 6. IMPLEMENTADO Y PENDIENTE -->
+    <section class="modulo">
+      <h2>⚙️ Qué hay implementado y qué no</h2>
+
+      <h3>✅ Implementado</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Hash Argon2</b> de la contraseña (passlib), en <code>app/core/security.py</code>.</li>
+          <li><b>Token JWT HS256</b> con caducidad de <b>30 minutos</b>, firmado con la clave secreta del <code>.env</code>.</li>
+          <li><b>Verificación del token</b> en cada ruta protegida (<code>GET /auth/me</code>).</li>
+          <li><b>Correo normalizado a minúsculas</b> en registro y login, para evitar cuentas duplicadas.</li>
+          <li><b>CORS</b> configurado para el frontend en desarrollo (<code>localhost:3000</code> y <code>3001</code>).</li>
+        </ul>
+      </div>
+
+      <h3>🕗 Pendiente (mejoras futuras)</h3>
+      <div class="caja">
+        <ul>
+          <li><b>Rate limiting:</b> limitar los intentos de login por minuto para frenar la fuerza bruta. Aún no está.</li>
+          <li><b>Token en cookie <code>httpOnly</code>:</b> hoy vive en <code>localStorage</code>/<code>sessionStorage</code>, accesible por JavaScript. Una cookie <code>httpOnly</code> sería más resistente a ataques XSS.</li>
+          <li><b>Refresh token:</b> renovar la sesión sin volver a pedir la contraseña cuando el token de 30 minutos caduca.</li>
+          <li><b>CORS de producción</b> y <b>HTTPS</b>: hoy los orígenes son de desarrollo local.</li>
+          <li><b>Reglas de contraseña y bloqueo de correos desechables en el backend:</b> ahora solo se comprueban en el navegador.</li>
+        </ul>
+      </div>
+
+      <div class="banner azul">
+        <b>Nota de alcance:</b> este documento describe lo que hay en el código hoy. Las mejoras
+        pendientes se anotan para no afirmar de más; se irán añadiendo en iteraciones futuras.
+      </div>
+    </section>
+
+    <!-- 7. TECNOLOGÍAS -->
+    <section class="modulo">
+      <h2>💻 Tecnologías reales del proyecto</h2>
+      <div class="caja">
+        <p><b>Backend:</b> Python · FastAPI · SQLAlchemy 2.0 · passlib (Argon2) · python-jose (JWT) · SQLite (archivo local)</p>
+        <p><b>Frontend:</b> Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · localStorage / sessionStorage</p>
+        <p><b>Seguridad:</b> JWT HS256 · hash Argon2 · CORS</p>
+      </div>
+      <div class="porque">
+        Se diferencia del prototipo anterior, que usaba Flask, scrypt, PostgreSQL/Supabase y
+        React con Vite. Este documento refleja el stack actual.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="brand" style="justify-content:center">
+        <svg width="40" height="26" viewBox="0 0 270 160" role="img" aria-label="English Assistant">
+          <defs><clipPath id="clipF"><rect x="0" y="0" width="270" height="112" /></clipPath></defs>
+          <polygon points="0,0 128,0 109,28 0,28" fill="#ffffff" />
+          <path d="M0,67 L103,67 L84,95 L28,95 L28,130 L128,130 L109,160 L0,160 Z" fill="#ffffff" />
+          <polygon points="165,0 200,0 265,160 230,160" fill="rgba(255,255,255,0.85)" />
+          <polygon points="165,0 200,0 118,160 83,160" fill="rgba(255,255,255,0.85)" clip-path="url(#clipF)" />
+        </svg>
+        <span class="divider"></span>
+        <span class="txt"><span class="t1">English</span><span class="t2">Assistant</span></span>
+      </div>
+      <p class="copy" style="margin-top:14px">© 2026 Orlando Parra Vargas · English Assistant</p>
+    </div>
+  </footer>
+</body>
+</html>

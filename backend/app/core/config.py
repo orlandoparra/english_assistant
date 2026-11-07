@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "clave-insegura-solo-para-desarrollo"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ALGORITHM: str = "HS256"
+    # URL base del frontend, usada para construir el Enlace_Restablecimiento.
+    FRONTEND_URL: str = "http://localhost:3000"
+    # Minutos de validez de un Token_Restablecimiento.
+    RESET_TOKEN_EXPIRE_MINUTES: int = 30
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
