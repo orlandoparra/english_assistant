@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import HelpButton from "@/components/HelpButton";
 import { AuthProvider } from "@/context/AuthContext";
 
-// Montserrat es la tipografía que se ve en el diseño de referencia.
+// Montserrat: tipografía base del cuerpo.
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
@@ -20,7 +20,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${montserrat.variable} h-full antialiased`}>
+    <html
+      lang="es"
+      className={`${montserrat.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">
         {/*
           AuthProvider (client component) envuelve toda la app para compartir
