@@ -30,29 +30,35 @@ const features = [
 
 export default function HeroHoloEdu() {
   return (
-    <section className="relative overflow-hidden bg-[#0a1a3f]">
-      {/* Degradado base azul noche */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,#07122e_0%,#0b2d6b_45%,#1546a8_100%)]"
-      />
-      {/* Brillo celeste difuso a la derecha (donde está la persona) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_60%_at_78%_40%,rgba(59,130,246,0.45),transparent_60%)]"
-      />
-      {/* Curva de luz decorativa */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute right-0 top-1/4 h-[480px] w-[480px] rounded-full border border-sky-400/20 blur-[2px]"
-      />
-
-      {/* Barra de navegación propia del hero oscuro */}
-      <div className="relative mx-auto max-w-6xl">
-        <HoloEduNavbar />
+    <div className="mx-auto w-full max-w-[1400px] px-4 pt-6 lg:px-7">
+      {/* ---- Barra de navegación como tarjeta tipo "píldora" (esquinas muy
+          redondeadas, como la referencia). Mismo ancho que el hero. ---- */}
+      <div className="overflow-hidden rounded-full bg-[#0a1a3f] shadow-lg shadow-brand-900/20">
+        <div className="relative px-4">
+          <HoloEduNavbar />
+        </div>
       </div>
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-6 pb-14 pt-6 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pb-20 md:pt-8">
+      {/* ---- Hero dentro de una tarjeta con esquinas muy amplias ----
+          Mismo ancho que la navbar y que el bloque de la opción A. */}
+      <section className="relative mt-4 overflow-hidden rounded-[2.5rem] bg-[#0a1a3f] shadow-2xl shadow-brand-900/20">
+        {/* Degradado base azul noche */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,#07122e_0%,#0b2d6b_45%,#1546a8_100%)]"
+        />
+        {/* Brillo celeste difuso a la derecha (donde está la persona) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_60%_at_78%_40%,rgba(59,130,246,0.45),transparent_60%)]"
+        />
+        {/* Curva de luz decorativa */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-1/4 h-[480px] w-[480px] rounded-full border border-sky-400/20 blur-[2px]"
+        />
+
+      <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-6 pb-8 pt-8 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pb-10 md:pt-10">
         {/* ---- Columna de texto ----
              `min-w-0` + la columna con minmax(0,..) evitan que la imagen de la
              derecha comprima este bloque y parta el título en más líneas. */}
@@ -193,33 +199,8 @@ export default function HeroHoloEdu() {
         </div>
       </div>
 
-      {/* Ondas inferiores sutiles: curvas suaves y de poca amplitud que bajan a
-          blanco, como un cierre discreto. */}
-      <div aria-hidden="true" className="relative mt-6 h-16 w-full sm:h-20">
-        <svg
-          className="absolute inset-0 h-full w-full"
-          viewBox="0 0 1440 90"
-          preserveAspectRatio="none"
-        >
-          {/* Capa 1: azul brillante muy translúcido, ondulación leve */}
-          <path
-            d="M0,52 C360,78 720,34 1080,52 C1260,61 1380,52 1440,50 L1440,90 L0,90 Z"
-            fill="#3b82f6"
-            fillOpacity="0.4"
-          />
-          {/* Capa 2: azul medio translúcido, ligero desfase */}
-          <path
-            d="M0,64 C380,44 760,80 1120,62 C1280,54 1380,64 1440,62 L1440,90 L0,90 Z"
-            fill="#1d6fd6"
-            fillOpacity="0.55"
-          />
-          {/* Capa 3: blanco (base de la siguiente sección) */}
-          <path
-            d="M0,74 C400,60 820,84 1160,74 C1300,70 1380,76 1440,74 L1440,90 L0,90 Z"
-            fill="#ffffff"
-          />
-        </svg>
-      </div>
-    </section>
+      </section>
+      <div className="h-6" aria-hidden="true" />
+    </div>
   );
 }
