@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Caveat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,6 +12,14 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
+// Caveat: tipografía manuscrita para detalles decorativos (p. ej. el texto
+// "Your English Journey Starts Here" del hero).
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "English Assistant | Aprende inglés a tu ritmo",
   description:
@@ -22,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${montserrat.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         {/*

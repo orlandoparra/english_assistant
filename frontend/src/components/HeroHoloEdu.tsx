@@ -165,29 +165,57 @@ export default function HeroHoloEdu() {
             `overflow-visible`, así la imagen desborda hacia la izquierda sin
             recortarse. Para hacerla más grande/pequeña, cambia SOLO el `w-[..]`.
           */}
+          {/*
+            La imagen trae su propio fondo; su borde IZQUIERDO crea una línea
+            que parte el hero. Para unificarla aplicamos una máscara de
+            desvanecido (`mask-image`): el lado izquierdo se vuelve transparente
+            de forma gradual y se funde con el fondo del hero. Se duplica con
+            prefijo -webkit- para compatibilidad.
+          */}
           <Image
-            src="/images/hero-student-nobg.png"
+            src="/images/hero-student_2.png"
             alt="Estudiante sonriendo con audífonos"
-            width={564}
-            height={443}
+            width={1454}
+            height={1082}
             priority
             sizes="(min-width: 768px) 55vw, 100vw"
-            className="relative z-10 mx-auto h-auto w-[22rem] max-w-none sm:w-[30rem] md:ml-auto md:mr-0 md:w-[38rem]"
+            className="relative z-10 ml-auto h-auto w-[150%] max-w-none translate-x-[-3rem] sm:w-[125%] sm:translate-x-[-2rem] md:ml-auto md:mr-0 md:w-[43rem] md:translate-x-[-5rem] [mask-composite:intersect] [-webkit-mask-composite:source-in] [mask-image:linear-gradient(to_right,transparent_0%,#000_22%),linear-gradient(to_bottom,transparent_0%,#000_14%,#000_86%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,#000_22%),linear-gradient(to_bottom,transparent_0%,#000_14%,#000_86%,transparent_100%)]"
           />
 
-          {/* Texto manuscrito decorativo */}
-          <p className="absolute right-2 top-2 hidden text-right font-serif text-sm italic leading-tight text-sky-200/80 sm:block">
-            Your
-            <br />
-            English
-            <br />
-            Journey
-            <br />
-            Starts Here
-          </p>
+          {/* Texto manuscrito decorativo (fuente Caveat, inclinado en diagonal
+              como en la referencia). */}
+          <div className="absolute right-[-0.25rem] top-[22%] z-20 block rotate-[-8deg] sm:right-6 sm:top-[18%] md:right-[-3rem] md:top-1/4">
+            <p className="text-right font-[family-name:var(--font-caveat)] text-lg font-semibold leading-[0.9] text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)] sm:text-xl lg:text-2xl">
+              Your
+              <br />
+              English
+              <br />
+              Journey
+              <br />
+              Starts Here
+            </p>
+            {/* Subrayado curvo a mano alzada bajo "Starts Here". En móvil es
+                corto (desde la "S"); en escritorio se alarga y se alinea a la
+                derecha para abarcar "Starts Here" completo. */}
+            <svg
+              className="mt-1 block h-3 w-16 md:ml-auto md:w-24"
+              viewBox="0 0 140 20"
+              fill="none"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 14 C40 4, 100 4, 136 10"
+                stroke="#ffffff"
+                strokeWidth="3"
+                strokeLinecap="round"
+                style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.3))" }}
+              />
+            </svg>
+          </div>
 
           {/* Badge flotante: de A1 a C2 */}
-          <div className="absolute -bottom-2 right-0 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-xl backdrop-blur-md">
+          <div className="absolute bottom-[-1rem] right-2 z-20 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-3 py-2 shadow-xl backdrop-blur-md sm:bottom-6 sm:right-4 sm:px-4 sm:py-3 md:bottom-8 md:right-0">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-sky-500/30 text-sky-200">
               <TrendingUp className="h-5 w-5" aria-hidden="true" />
             </span>
