@@ -21,9 +21,9 @@ export default function MissionSection() {
         {/* 1. Encabezado: antetítulo + título (móvil: order-1) */}
         <div className="order-1 md:order-none md:self-end">
           {/* Antetítulo (eyebrow): identifica la sección como la misión.
-             Degradado de azul oscuro a aguamarina aplicado al texto. */}
-          <p className="w-fit bg-[linear-gradient(90deg,#0a2540_0%,#1565a6_50%,#2dd4bf_100%)] bg-clip-text text-sm font-bold uppercase tracking-[0.18em] text-transparent">
-            Nuestra misión
+             Mismo degradado celeste que "Abre tu Mundo" del Hero C. */}
+          <p className="w-fit bg-[linear-gradient(90deg,#7dd3fc,#38bdf8_50%,#2563eb)] bg-clip-text text-sm font-bold tracking-[0.18em] text-transparent">
+            Nuestra Misión
           </p>
 
           <h2 className="mt-2 text-3xl font-bold leading-tight text-brand-900 sm:text-4xl">
@@ -72,7 +72,7 @@ export default function MissionSection() {
 
           <Link
             href="#cursos"
-            className="mt-8 inline-flex items-center gap-3 rounded-full bg-[linear-gradient(180deg,#0b3aa0_0%,#1d6fd6_55%,#3b9bff_100%)] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-sky-500/30 ring-1 ring-inset ring-white/20 transition-all hover:-translate-y-0.5 hover:shadow-xl"
+            className="mt-8 inline-flex items-center gap-3 rounded-full bg-[linear-gradient(180deg,#1d6fd6_0%,#154fb0_55%,#0b3aa0_100%)] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand-700/30 ring-1 ring-inset ring-white/20 transition-all hover:-translate-y-0.5 hover:shadow-xl"
           >
             Conoce nuestros cursos
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">

@@ -8,11 +8,11 @@ type LogoProps = {
 // Logo "English Assistant" dibujado en SVG (vectorial: nítido a cualquier tamaño).
 export default function Logo({ dark = false, className = "" }: LogoProps) {
   const eColor = dark ? "#ffffff" : "#0f172a";
-  // Azul de la marca (tomado de la imagen de referencia) para la letra A y la
-  // palabra "Assistant" en la variante clara (sobre fondo blanco).
-  const aColor = dark ? "rgba(255,255,255,0.85)" : "#1a4fb0";
+  // Letra "A" y palabra "Assistant": celeste sobre fondo oscuro (variante dark,
+  // como en el Hero C) y azul de marca sobre fondo blanco (variante clara).
+  const aColor = dark ? "#38bdf8" : "#1a4fb0";
   const txtTop = dark ? "text-white" : "text-slate-900";
-  const txtBottom = dark ? "text-white/90" : "text-[#1a4fb0]";
+  const txtBottom = dark ? "text-sky-300" : "text-[#1a4fb0]";
   const divider = dark ? "bg-white/25" : "bg-black/10";
 
   return (

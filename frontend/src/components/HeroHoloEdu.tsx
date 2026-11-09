@@ -6,7 +6,6 @@ import {
   Globe,
   Headphones,
   MessageCircle,
-  Play,
   TrendingUp,
   Trophy,
 } from "lucide-react";
@@ -15,8 +14,8 @@ import HoloEduNavbar from "@/components/HoloEduNavbar";
 /**
  * HeroHoloEdu: Opción C, recreación del diseño de referencia (hero oscuro
  * inmersivo). Fondo azul noche con degradados y curvas de luz, badge superior,
- * titular enorme con una palabra destacada en degradado celeste, dos botones
- * (primario + "Ver video"), una fila de 4 features con iconos y un badge
+ * titular enorme con una palabra destacada en degradado celeste, botón
+ * primario "Comenzar Ahora", una fila de 4 features con iconos y un badge
  * flotante "De A1 a C2". Usa la imagen existente y la paleta de marca.
  */
 
@@ -53,9 +52,11 @@ export default function HeroHoloEdu() {
         <HoloEduNavbar />
       </div>
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-6 pb-14 pt-6 md:grid-cols-[1.05fr_0.95fr] md:pb-20 md:pt-8">
-        {/* ---- Columna de texto ---- */}
-        <div className="text-center md:text-left">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-6 pb-14 pt-6 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pb-20 md:pt-8">
+        {/* ---- Columna de texto ----
+             `min-w-0` + la columna con minmax(0,..) evitan que la imagen de la
+             derecha comprima este bloque y parta el título en más líneas. */}
+        <div className="min-w-0 text-center md:text-left">
           {/* Badge superior */}
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white backdrop-blur">
             <Globe className="h-4 w-4 text-sky-300" aria-hidden="true" />
@@ -92,7 +93,7 @@ export default function HeroHoloEdu() {
             </span>
           </h1>
 
-          <p className="mx-auto mt-5 max-w-lg text-base leading-7 text-sky-100/80 md:mx-0">
+          <p className="mx-auto mt-5 max-w-lg text-base leading-7 text-white md:mx-0">
             Aprende de forma interactiva, práctica y divertida. Mejora tu
             listening, speaking y confianza.
           </p>
@@ -101,22 +102,13 @@ export default function HeroHoloEdu() {
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row md:justify-start">
             <Link
               href="/register"
-              className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-[linear-gradient(180deg,#0b3aa0_0%,#1d6fd6_55%,#3b9bff_100%)] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-sky-500/30 ring-1 ring-inset ring-white/20 transition-all hover:-translate-y-0.5 hover:shadow-xl sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-[linear-gradient(180deg,#ffffff_0%,#eef5ff_55%,#d7e8ff_100%)] px-7 py-3.5 text-sm font-bold text-brand-700 shadow-lg shadow-sky-900/40 ring-1 ring-inset ring-brand-700/15 transition-all hover:-translate-y-0.5 hover:shadow-xl sm:w-auto"
             >
               Comenzar Ahora
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[linear-gradient(180deg,#1d6fd6_0%,#154fb0_55%,#0b3aa0_100%)]">
+                <ArrowRight className="h-4 w-4 text-white" aria-hidden="true" />
               </span>
             </Link>
-            <button
-              type="button"
-              className="inline-flex items-center gap-3 text-sm font-semibold text-white transition-colors hover:text-sky-300"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30">
-                <Play className="h-4 w-4 fill-white" aria-hidden="true" />
-              </span>
-              Ver Video
-            </button>
           </div>
 
           {/* Áreas de aprendizaje dentro de un único panel translúcido, con los
@@ -148,23 +140,34 @@ export default function HeroHoloEdu() {
           </div>
         </div>
 
-        {/* ---- Columna visual ---- */}
-        <div className="relative">
+        {/* ---- Columna visual ----
+             En escritorio se eleva con un margen negativo para que la imagen
+             quede un poco más alta que el título del lado izquierdo.
+             `overflow-visible` permite que la imagen crezca más allá del ancho
+             de su columna del grid sin quedar recortada. */}
+        <div className="relative overflow-visible md:-mt-12">
           {/* Anillo de luz detrás de la persona */}
           <div
             aria-hidden="true"
             className="absolute inset-0 m-auto h-72 w-72 rounded-full bg-sky-400/20 blur-3xl sm:h-96 sm:w-96"
           />
-          <div className="relative h-80 w-full sm:h-[460px]">
-            <Image
-              src="/images/hero-student.png"
-              alt="Estudiante sonriendo con audífonos"
-              fill
-              priority
-              sizes="(min-width: 768px) 45vw, 100vw"
-              className="object-contain object-bottom"
-            />
-          </div>
+          {/*
+            IMPORTANTE: la imagen vive en la columna derecha del grid (0.9fr).
+            Con `w-full` nunca superaría el ancho de esa columna, por eso antes
+            "no crecía". Para agrandarla de verdad usamos un ANCHO FIJO en rem
+            (`w-[34rem]`, etc.) que puede exceder la columna; el contenedor tiene
+            `overflow-visible`, así la imagen desborda hacia la izquierda sin
+            recortarse. Para hacerla más grande/pequeña, cambia SOLO el `w-[..]`.
+          */}
+          <Image
+            src="/images/hero-student-nobg.png"
+            alt="Estudiante sonriendo con audífonos"
+            width={564}
+            height={443}
+            priority
+            sizes="(min-width: 768px) 55vw, 100vw"
+            className="relative z-10 mx-auto h-auto w-[22rem] max-w-none sm:w-[30rem] md:ml-auto md:mr-0 md:w-[38rem]"
+          />
 
           {/* Texto manuscrito decorativo */}
           <p className="absolute right-2 top-2 hidden text-right font-serif text-sm italic leading-tight text-sky-200/80 sm:block">

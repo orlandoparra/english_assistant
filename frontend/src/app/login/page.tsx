@@ -204,11 +204,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="mt-2 inline-flex w-full items-center justify-center gap-3 rounded-full bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-2 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[linear-gradient(180deg,#1d6fd6_0%,#154fb0_55%,#0b3aa0_100%)] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-700/30 ring-1 ring-inset ring-white/20 transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
           >
             {submitting ? "Iniciando Sesión…" : "Iniciar Sesión"}
             {!submitting && (
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </span>
             )}
           </button>
         </form>

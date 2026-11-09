@@ -10,6 +10,7 @@ import {
   User,
   Users,
 } from "lucide-react";
+import Logo from "@/components/Logo";
 
 /**
  * HoloEduNavbar: barra de navegación oscura para el hero de la Opción C.
@@ -37,43 +38,12 @@ const icon3d =
 export default function HoloEduNavbar() {
   return (
     <nav className="relative z-10 flex items-center justify-between gap-4 px-6 py-4">
-      {/* Logo */}
-      <div className="flex items-center gap-3">
-        <span className="flex items-center">
-          <svg
-            width="40"
-            height="26"
-            viewBox="0 0 270 160"
-            role="img"
-            aria-label="English Assistant"
-          >
-            <defs>
-              <clipPath id="holoLogoClip">
-                <rect x="0" y="0" width="270" height="112" />
-              </clipPath>
-            </defs>
-            <polygon points="0,0 128,0 109,28 0,28" fill="#ffffff" />
-            <path
-              d="M0,67 L103,67 L84,95 L28,95 L28,130 L128,130 L109,160 L0,160 Z"
-              fill="#ffffff"
-            />
-            <polygon points="165,0 200,0 265,160 230,160" fill="#38bdf8" />
-            <polygon
-              points="165,0 200,0 118,160 83,160"
-              fill="#38bdf8"
-              clipPath="url(#holoLogoClip)"
-            />
-          </svg>
-          <span className="ml-2 flex flex-col leading-tight">
-            <span className="text-sm font-bold tracking-[0.18em] text-white">
-              English
-            </span>
-            <span className="text-xs font-semibold tracking-wide text-sky-300">
-              Assistant
-            </span>
-          </span>
-        </span>
-      </div>
+      {/* Logo: se reutiliza el componente compartido en su variante oscura,
+          para que las proporciones de "English/Assistant" sean idénticas a las
+          de la navbar de la opción A. */}
+      <Link href="/" aria-label="English Assistant - Inicio">
+        <Logo dark />
+      </Link>
 
       {/* Items centrales (solo en pantallas grandes) */}
       <ul className="hidden items-center gap-1 lg:flex">

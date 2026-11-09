@@ -90,7 +90,7 @@
   <header>
     <h1>English Assistant</h1>
     <p>Documento de arquitectura de la plataforma</p>
-    <div class="meta">Última actualización: 6 de noviembre de 2026</div>
+    <div class="meta">Última actualización: 7 de noviembre de 2026</div>
   </header>
 
   <main>
@@ -116,18 +116,23 @@
     <section>
       <h2>2. Frontend</h2>
       <pre>frontend/
-├── public/images/        → Imágenes (hero-student.png)
+├── public/images/        → Imágenes (hero-student.png, hero-student_c.png, mision.png)
 └── src/
     ├── app/              → PÁGINAS y rutas
     │   ├── layout.tsx    → Plantilla fija: Navbar + {centro} + Footer (con AuthProvider)
-    │   ├── page.tsx      → Página principal "/" (muestra el Hero)
+    │   ├── page.tsx      → Página principal "/" (comparativa de encabezados:
+    │   │                   Hero "Opción A" + HeroHoloEdu "Opción C" + MissionSection)
     │   ├── login/        → "/login": inicio de sesión
     │   ├── register/     → "/register": creación de cuenta
     │   ├── dashboard/    → "/dashboard": zona autenticada
     │   └── globals.css   → Paleta de colores y estilos base
     ├── components/       → Piezas reutilizables
     │   ├── Navbar.tsx    → Barra superior
-    │   ├── Hero.tsx      → Sección principal con degradado
+    │   ├── Hero.tsx      → Sección principal con degradado (encabezado "Opción A")
+    │   ├── HeroModern.tsx→ Encabezado alternativo (variante en evaluación)
+    │   ├── HeroHoloEdu.tsx→ Encabezado oscuro inmersivo "Opción C" (incluye HoloEduNavbar)
+    │   ├── HoloEduNavbar.tsx→ Navbar oscura propia del hero HoloEdu
+    │   ├── MissionSection.tsx→ Sección de misión / bienvenida de la home
     │   ├── Footer.tsx    → Pie de página (4 columnas / acordeones)
     │   ├── Logo.tsx      → Logo "English Assistant" (SVG vectorial)
     │   ├── HelpButton.tsx→ Botón flotante de ayuda
