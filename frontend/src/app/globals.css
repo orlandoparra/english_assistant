@@ -10,6 +10,7 @@
   --color-accent-600: #b91c1c; /* rojo oscuro (hover) */
   --color-sky-soft: #f0f7ff; /* azul muy claro para el fondo superior */
   --font-sans: var(--font-montserrat);
+  --font-display: var(--font-poppins); /* títulos (clase font-display) */
 }
 
 body {

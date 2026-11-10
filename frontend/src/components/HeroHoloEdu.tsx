@@ -30,7 +30,7 @@ const features = [
 
 export default function HeroHoloEdu() {
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 pt-6 lg:px-7">
+    <div className="mx-auto w-full max-w-[1400px] px-5 pt-6 sm:px-6 lg:px-7">
       {/* ---- Barra de navegación como tarjeta tipo "píldora" (esquinas muy
           redondeadas, como la referencia). Mismo ancho que el hero. ---- */}
       <div className="overflow-hidden rounded-full bg-[#0a1a3f] shadow-lg shadow-brand-900/20">
@@ -52,25 +52,31 @@ export default function HeroHoloEdu() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_60%_at_78%_40%,rgba(59,130,246,0.45),transparent_60%)]"
         />
-        {/* Curva de luz decorativa */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute right-0 top-1/4 h-[480px] w-[480px] rounded-full border border-sky-400/20 blur-[2px]"
-        />
-
       <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-6 pb-8 pt-8 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:pb-10 md:pt-10">
         {/* ---- Columna de texto ----
              `min-w-0` + la columna con minmax(0,..) evitan que la imagen de la
              derecha comprima este bloque y parta el título en más líneas. */}
         <div className="min-w-0 text-center md:text-left">
-          {/* Badge superior */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white backdrop-blur">
-            <Globe className="h-4 w-4 text-sky-300" aria-hidden="true" />
-            Learn English. Go Further.
+          {/* Badge superior: borde con DEGRADADO (aguamarina -> azul oscuro).
+              Se logra con un contenedor degradado + padding de 1px que actúa
+              como borde, y el contenido dentro sobre fondo oscuro. */}
+          <span className="inline-block rounded-full bg-[linear-gradient(120deg,#2dd4bf_0%,#1d6fd6_50%,#0b2d6b_100%)] p-px">
+            <span className="relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-[#0a1a3f] px-4 py-2 text-sm font-semibold text-white">
+              {/* Brillo celeste al inicio, donde está el globo (idioma / mundo). */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute left-0 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-sky-400/25 blur-lg"
+              />
+              <Globe
+                className="relative h-4 w-4 text-sky-300 [filter:drop-shadow(0_0_4px_rgba(56,189,248,0.6))]"
+                aria-hidden="true"
+              />
+              <span className="relative">Learn English. Go Further.</span>
+            </span>
           </span>
 
           {/* Titular */}
-          <h1 className="mt-6 text-4xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-6 font-[family-name:var(--font-poppins)] text-4xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-5xl lg:text-6xl">
             Domina el Inglés,
             <br />
             <span className="inline-block bg-[linear-gradient(90deg,#7dd3fc,#38bdf8_50%,#2563eb)] bg-clip-text pr-2 italic text-transparent [-webkit-box-decoration-break:clone]">
@@ -152,11 +158,6 @@ export default function HeroHoloEdu() {
              `overflow-visible` permite que la imagen crezca más allá del ancho
              de su columna del grid sin quedar recortada. */}
         <div className="relative overflow-visible md:-mt-12">
-          {/* Anillo de luz detrás de la persona */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 m-auto h-72 w-72 rounded-full bg-sky-400/20 blur-3xl sm:h-96 sm:w-96"
-          />
           {/*
             IMPORTANTE: la imagen vive en la columna derecha del grid (0.9fr).
             Con `w-full` nunca superaría el ancho de esa columna, por eso antes
@@ -179,7 +180,7 @@ export default function HeroHoloEdu() {
             height={1082}
             priority
             sizes="(min-width: 768px) 55vw, 100vw"
-            className="relative z-10 ml-auto h-auto w-[150%] max-w-none translate-x-[-3rem] sm:w-[125%] sm:translate-x-[-2rem] md:ml-auto md:mr-0 md:w-[43rem] md:translate-x-[-5rem] [mask-composite:intersect] [-webkit-mask-composite:source-in] [mask-image:linear-gradient(to_right,transparent_0%,#000_22%),linear-gradient(to_bottom,transparent_0%,#000_14%,#000_86%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,#000_22%),linear-gradient(to_bottom,transparent_0%,#000_14%,#000_86%,transparent_100%)]"
+            className="relative z-10 ml-auto h-auto w-[150%] max-w-none translate-x-[-3rem] sm:w-[125%] sm:translate-x-[-2rem] md:ml-auto md:mr-0 md:w-[43rem] md:translate-x-[-5rem] [mask-composite:intersect] [-webkit-mask-composite:source-in] [mask-image:linear-gradient(to_right,transparent_0%,#000_26%),linear-gradient(to_bottom,transparent_0%,#000_14%,#000_86%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,#000_26%),linear-gradient(to_bottom,transparent_0%,#000_14%,#000_86%,transparent_100%)]"
           />
 
           {/* Texto manuscrito decorativo (fuente Caveat, inclinado en diagonal

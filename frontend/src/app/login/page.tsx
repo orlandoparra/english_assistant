@@ -141,7 +141,7 @@ export default function LoginPage() {
           Volver al inicio
         </Link>
 
-        <h1 className="text-center text-2xl font-bold text-slate-900">
+        <h1 className="text-center font-[family-name:var(--font-poppins)] text-2xl font-bold text-slate-900">
           Iniciar sesión
         </h1>
 

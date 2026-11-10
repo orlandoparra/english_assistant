@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Caveat } from "next/font/google";
+import { Montserrat, Caveat, Poppins, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,6 +20,21 @@ const caveat = Caveat({
   weight: ["400", "600", "700"],
 });
 
+// Poppins: tipografía para títulos (clase utilitaria `font-display`). En
+// evaluación para comparar con Montserrat.
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+});
+
+// Inter: sans-serif humanista para títulos de sección (p. ej. el de la Misión).
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+});
+
 export const metadata: Metadata = {
   title: "English Assistant | Aprende inglés a tu ritmo",
   description:
@@ -30,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${montserrat.variable} ${caveat.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${caveat.variable} ${poppins.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         {/*

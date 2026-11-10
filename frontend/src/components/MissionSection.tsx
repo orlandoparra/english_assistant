@@ -21,12 +21,12 @@ export default function MissionSection() {
         {/* 1. Encabezado: antetítulo + título (móvil: order-1) */}
         <div className="order-1 md:order-none md:self-end">
           {/* Antetítulo (eyebrow): identifica la sección como la misión.
-             Mismo degradado celeste que "Abre tu Mundo" del Hero C. */}
-          <p className="w-fit bg-[linear-gradient(90deg,#7dd3fc,#38bdf8_50%,#2563eb)] bg-clip-text text-sm font-bold tracking-[0.18em] text-transparent">
+             Tipografía Inter y color azul marino (como la imagen de referencia). */}
+          <p className="w-fit font-[family-name:var(--font-inter)] text-base font-bold tracking-[0.18em] text-[#2b5c93]">
             Nuestra Misión
           </p>
 
-          <h2 className="mt-2 text-3xl font-bold leading-tight text-brand-900 sm:text-4xl">
+          <h2 className="mt-2 font-[family-name:var(--font-inter)] text-3xl font-bold leading-tight text-slate-600 sm:text-4xl">
             Bienvenido a English Assistant
           </h2>
         </div>
@@ -38,13 +38,13 @@ export default function MissionSection() {
           (`overflow-hidden`). El fondo replica el de la imagen de referencia:
           un degradado muy suave de blanco a rojo pálido hacia la derecha.
         */}
-        <div className="relative order-2 overflow-hidden rounded-3xl bg-[linear-gradient(120deg,#ffffff_0%,#fdf4f4_60%,#f9dede_100%)] shadow-sm md:order-first md:row-span-2">
-          <div className="relative h-80 w-full sm:h-[420px]">
+        <div className="relative order-2 overflow-hidden rounded-3xl bg-[linear-gradient(120deg,#f7f1f1_0%,#f6e4e4_60%,#efc9c9_100%)] shadow-sm md:order-first md:row-span-2">
+          <div className="relative h-[22rem] w-full sm:h-[450px]">
             <Image
               src="/images/mision.png"
               alt="Estudiante de English Assistant con un libro"
               fill
-              sizes="(min-width: 768px) 45vw, 100vw"
+              sizes="(min-width: 768px) 50vw, 100vw"
               className="object-contain object-bottom"
               priority
             />
@@ -53,11 +53,12 @@ export default function MissionSection() {
 
         {/* 3. Cuerpo: párrafos + botón (móvil: order-3) */}
         <div className="order-3 md:order-none md:self-start">
-          <div className="space-y-4 text-base leading-7 text-slate-900">
+          <div className="space-y-4 text-pretty text-base leading-7 text-slate-900">
             <p>
               Somos un complemento para tu formación: un apoyo para estudiantes
-              de universidades e institutos que quieren reforzar su inglés con un
-              método práctico y personalizado, adaptado a tu ritmo.
+              de universidades e&nbsp;institutos que quieren reforzar su inglés
+              con&nbsp;un&nbsp;método práctico y personalizado, adaptado a tu
+              ritmo.
             </p>
             <p>
               Diseñamos una ruta clara de A1 a C2 que integra vocabulario,
