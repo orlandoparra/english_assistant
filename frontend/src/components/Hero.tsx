@@ -9,14 +9,14 @@ import {
   TrendingUp,
   Trophy,
 } from "lucide-react";
-import HoloEduNavbar from "@/components/HoloEduNavbar";
+import Navbar from "@/components/Navbar";
 
 /**
- * HeroHoloEdu: Opción C, recreación del diseño de referencia (hero oscuro
- * inmersivo). Fondo azul noche con degradados y curvas de luz, badge superior,
- * titular enorme con una palabra destacada en degradado celeste, botón
- * primario "Comenzar Ahora", una fila de 4 features con iconos y un badge
- * flotante "De A1 a C2". Usa la imagen existente y la paleta de marca.
+ * Hero: encabezado principal de la home (hero oscuro inmersivo). Fondo azul
+ * noche con degradados y curvas de luz, badge superior, titular enorme con una
+ * palabra destacada en degradado celeste, botón primario "Comenzar Ahora", una
+ * fila de 4 features con iconos y un badge flotante "De A1 a C2". Usa la imagen
+ * existente y la paleta de marca.
  */
 
 // Cada área con su color (como en la referencia) y una sombra proyectada que da
@@ -28,14 +28,14 @@ const features = [
   { icon: Trophy, label: "Sigue tu progreso", color: "#f5b301" },
 ];
 
-export default function HeroHoloEdu() {
+export default function Hero() {
   return (
     <div className="mx-auto w-full max-w-[1400px] px-5 pt-6 sm:px-6 lg:px-7">
-      {/* ---- Barra de navegación como tarjeta tipo "píldora" (esquinas muy
-          redondeadas, como la referencia). Mismo ancho que el hero. ---- */}
-      <div className="overflow-hidden rounded-full bg-[#0a1a3f] shadow-lg shadow-brand-900/20">
+      {/* ---- Barra de navegación tipo "píldora" (sticky: se queda fija arriba
+          al hacer scroll). Mismo ancho que el hero. ---- */}
+      <div className="sticky top-3 z-50 overflow-hidden rounded-full border border-white/10 bg-[#0a1a3f]/95 shadow-lg shadow-brand-900/30 backdrop-blur-md">
         <div className="relative px-4">
-          <HoloEduNavbar />
+          <Navbar />
         </div>
       </div>
 

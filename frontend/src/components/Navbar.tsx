@@ -1,100 +1,90 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Menu, X } from "lucide-react";
+import {
+  CircleHelp,
+  Home,
+  Layers,
+  Mail,
+  SignalHigh,
+  Sparkles,
+  Sun,
+  User,
+} from "lucide-react";
 import Logo from "@/components/Logo";
 
-// Secciones del menú principal
-const links = [
-  { href: "#cursos", label: "Cursos" },
-  { href: "#metodo", label: "Método" },
-  { href: "#precios", label: "Precios" },
-  { href: "#nosotros", label: "Sobre nosotros" },
+/**
+ * Navbar: barra de navegación oscura de la plataforma (usada en el hero de la
+ * home). Logo a la izquierda, items centrales con icono (Inicio, ¿Por qué
+ * nosotros?, Niveles, 4 Elementos, Preguntas, Contacto) y a la derecha un botón
+ * de tema (sol) y el botón "Login".
+ */
+
+const items = [
+  { icon: Home, label: "Inicio", href: "/", active: true },
+  { icon: Sparkles, label: "¿Por qué nosotros?", href: "#nosotros" },
+  { icon: SignalHigh, label: "Niveles", href: "#niveles" },
+  { icon: Layers, label: "4 Elementos", href: "#elementos" },
+  { icon: CircleHelp, label: "Preguntas", href: "#preguntas" },
+  { icon: Mail, label: "Contacto", href: "#contacto" },
 ];
 
+// Efecto "3D" para los iconos de línea: relleno suave, trazo más grueso y una
+// sombra proyectada (drop-shadow) que da sensación de volumen.
+const icon3d =
+  "h-[18px] w-[18px] [stroke-width:2.4] [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.45))]";
+
 export default function Navbar() {
-  // Controla si el menú móvil está abierto o cerrado
-  const [open, setOpen] = useState(false);
-
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        {/* Logo */}
-        <Link href="/" aria-label="English Assistant - Inicio">
-          <Logo />
+    <nav className="relative z-10 flex items-center justify-between gap-4 px-6 py-2.5">
+      {/* Logo: se reutiliza el componente compartido en su variante oscura,
+          para que las proporciones de "English/Assistant" sean idénticas a las
+          de la navbar de la opción A. */}
+      <Link href="/" aria-label="English Assistant - Inicio">
+        <Logo dark />
+      </Link>
+
+      {/* Items (alineados hacia la derecha, junto a las acciones) */}
+      <ul className="ml-auto hidden items-center gap-1 lg:flex">
+        {items.map(({ icon: Icon, label, href, active }) => (
+          <li key={label}>
+            <a
+              href={href}
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                active
+                  ? "bg-[linear-gradient(180deg,#0b3aa0_0%,#1d6fd6_55%,#3b9bff_100%)] text-white shadow-lg shadow-sky-500/40 ring-1 ring-inset ring-white/20"
+                  : "text-sky-100/80 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              <Icon
+                className={`${icon3d} ${active ? "text-white" : "text-sky-300"}`}
+                aria-hidden="true"
+              />
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Acciones de la derecha */}
+      <div className="flex items-center gap-2.5">
+        <button
+          type="button"
+          aria-label="Cambiar tema"
+          className="hidden h-8 w-8 items-center justify-center rounded-full text-sky-100/80 transition-colors hover:bg-white/10 hover:text-white sm:flex"
+        >
+          <Sun className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(180deg,#0b3aa0_0%,#1d6fd6_55%,#3b9bff_100%)] px-5 py-1.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/40 ring-1 ring-inset ring-white/25 transition-transform hover:-translate-y-0.5"
+        >
+          <User
+            className="h-4 w-4"
+            style={{ strokeWidth: 2.6, filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.5))" }}
+            aria-hidden="true"
+          />
+          Login
         </Link>
-
-        {/* Enlaces del centro: solo en pantallas medianas y grandes */}
-        <nav aria-label="Principal" className="hidden md:block">
-          <ul className="flex items-center gap-8 text-sm font-medium text-slate-700">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a href={link.href} className="transition-colors hover:text-brand-700">
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Acciones de la derecha */}
-        <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="hidden items-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-brand-700 transition-colors hover:bg-slate-100 sm:inline-flex"
-          >
-            Iniciar sesión
-            <ArrowRight className="h-4 w-4 text-brand-700" aria-hidden="true" />
-          </Link>
-          <Link
-            href="/register"
-            className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-900"
-          >
-            Empieza ahora
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-
-          {/* Botón de menú: solo en móvil */}
-          <button
-            type="button"
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="text-brand-900 md:hidden"
-          >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
       </div>
-
-      {/* Menú desplegable en móvil */}
-      {open && (
-        <nav aria-label="Principal móvil" className="border-t border-slate-200 bg-white md:hidden">
-          <ul className="mx-auto max-w-6xl px-6 py-2">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="block border-b border-slate-100 py-3 text-sm font-medium text-slate-700"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <Link
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="block py-3 text-sm font-medium text-slate-700 sm:hidden"
-              >
-                Iniciar sesión
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      )}
-    </header>
+    </nav>
   );
 }

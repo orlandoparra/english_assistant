@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat, Caveat, Poppins, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HelpButton from "@/components/HelpButton";
 import { AuthProvider } from "@/context/AuthContext";
@@ -53,8 +52,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           el estado de sesión con cualquier página o componente que lo consuma.
         */}
         <AuthProvider>
-          {/* Navbar y Footer quedan fijos; solo cambia {children} entre páginas */}
-          <Navbar />
+          {/*
+            Cada página aporta su propia barra: la home usa la navbar del hero;
+            el dashboard, DashboardBar; login/registro, el panel de AuthShell.
+            El Footer y el botón de ayuda sí son globales.
+          */}
           <main className="flex-1">{children}</main>
           <Footer />
           <HelpButton />

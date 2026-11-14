@@ -1,11 +1,11 @@
-import HeroHoloEdu from "@/components/HeroHoloEdu";
+import Hero from "@/components/Hero";
 import MissionSection from "@/components/MissionSection";
 
 export default function Home() {
   return (
     <>
       {/* Encabezado (hero) */}
-      <HeroHoloEdu />
+      <Hero />
 
       {/* Sección: Misión / Bienvenida */}
       <MissionSection />

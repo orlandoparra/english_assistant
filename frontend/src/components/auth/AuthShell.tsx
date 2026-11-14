@@ -19,8 +19,8 @@ type AuthShellProps = {
  *    opción C (azul noche inmersivo), logo, titular de marca y pie.
  *  - Derecha: la tarjeta blanca del formulario (`children`).
  *
- * Los colores replican los del Hero de la opción C (`HeroHoloEdu.tsx`) para
- * mantener la coherencia visual con la página principal.
+ * Los colores replican los del Hero de la home (`Hero.tsx`) para mantener la
+ * coherencia visual con la página principal.
  */
 export default function AuthShell({
   children,
