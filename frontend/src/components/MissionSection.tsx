@@ -73,7 +73,7 @@ export default function MissionSection() {
 
           <Link
             href="#cursos"
-            className="mt-8 inline-flex items-center gap-3 rounded-full bg-[linear-gradient(180deg,#1d6fd6_0%,#154fb0_55%,#0b3aa0_100%)] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand-700/30 ring-1 ring-inset ring-white/20 transition-all hover:-translate-y-0.5 hover:shadow-xl"
+            className="mt-8 inline-flex w-[94%] items-center justify-center gap-3 rounded-full bg-[linear-gradient(180deg,#1d6fd6_0%,#154fb0_55%,#0b3aa0_100%)] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand-700/30 ring-1 ring-inset ring-white/20 transition-all hover:-translate-y-0.5 hover:shadow-xl sm:w-auto sm:justify-start"
           >
             Conoce nuestros cursos
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20">

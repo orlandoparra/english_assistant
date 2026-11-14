@@ -174,7 +174,7 @@ export default function HeroHoloEdu() {
             prefijo -webkit- para compatibilidad.
           */}
           <Image
-            src="/images/hero-student_2.png"
+            src="/images/hero-student.png"
             alt="Estudiante sonriendo con audífonos"
             width={1454}
             height={1082}
